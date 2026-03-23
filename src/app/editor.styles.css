@@ -1,0 +1,32 @@
+.view {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  width: 100%;
+}
+.controls-section-container {
+  width: 200px;
+}
+.canvas-section-container {
+  height: min-content;
+  min-height: 200px;
+  max-height: 500px;
+  width: 300px;
+  aspect-ratio: 16 / 9;
+
+  resize: horizontal;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+}
+.canvas-container {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+.canvas-container canvas {
+  height: 100% !important;
+  width: 100% !important;
+  object-fit: block;
+}
