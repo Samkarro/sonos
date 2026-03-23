@@ -40,7 +40,7 @@ export default function Home() {
     analyserRef.current = analyser;
 
     const bars: PIXI.Graphics[] = [];
-    const barWidth = CANVAS_WIDTH / analyser.bufferLength;
+    const barWidth = (CANVAS_WIDTH / analyser.bufferLength) * 0.95;
 
     for (let i = 0; i < analyser.bufferLength; i++) {
       const bar = new PIXI.Graphics();
@@ -55,14 +55,15 @@ export default function Home() {
         analyser.dataArray as Uint8Array<ArrayBuffer>,
       );
 
-      for (let i = 0; i < analyser.bufferLength; i++) {
+      for (let i = 0; i < analyser.bufferLength - 30; i++) {
         const value = analyser.dataArray[i];
-        const height = (value / 255) * CANVAS_HEIGHT;
+        const height = 2 + (value / 255) * (CANVAS_HEIGHT * 0.8);
 
         const bar = bars[i];
         bar.clear();
         bar.beginFill(0xffffff);
         bar.drawRect(0, -height, barWidth - 2, height);
+        bar.x = i * (barWidth + 5);
         bar.endFill();
       }
     });
