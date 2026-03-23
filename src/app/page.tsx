@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./editor.styles.css";
 import * as PIXI from "pixi.js";
 import { createAudioAnalyser } from "@/utils/audio-analyzer";
@@ -13,12 +13,35 @@ export default function Home() {
   const analyserRef = useRef<ReturnType<typeof createAudioAnalyser> | null>(
     null,
   );
+  const [audioReady, setAudioReady] = useState(false);
 
   const handleAudio = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !analyserRef.current) return;
 
-    analyserRef.current.loadFile(file);
+    const maxSize = 50 * 1024 * 1024;
+
+    if (file.size > maxSize) {
+      alert("File size exceeds the limit of 50MB.");
+      e.target.value = "";
+      return;
+    }
+
+    const url = URL.createObjectURL(file);
+    const temp = new Audio(url);
+
+    temp.addEventListener("loadedmetadata", () => {
+      URL.revokeObjectURL(url);
+
+      if (temp.duration > 15 * 60) {
+        alert("Audio length exceeds the limit of 15 minutes.");
+        e.target.value = "";
+        return;
+      }
+
+      analyserRef.current!.loadFile(file);
+      setAudioReady(true);
+    });
   };
 
   useEffect(() => {
@@ -85,7 +108,11 @@ export default function Home() {
       <div className="controls-section-container">
         Hey
         <input type="file" accept="audio/" onChange={handleAudio} />
-        {audioRef != null && <audio ref={audioRef} controls></audio>}
+        <audio
+          ref={audioRef}
+          controls
+          style={{ display: audioReady ? "block" : "none" }}
+        ></audio>
       </div>
       <div className="canvas-section-container">
         <div className="canvas-container" ref={canvasRef}></div>
