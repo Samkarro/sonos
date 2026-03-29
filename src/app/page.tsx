@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import "./editor.styles.css";
 import * as PIXI from "pixi.js";
 import { createAudioAnalyser } from "@/utils/audio-analyzer";
+import { handleRecord } from "@/utils/handle-recording";
 
 const CANVAS_WIDTH = 1920;
 const CANVAS_HEIGHT = 1080;
@@ -13,7 +14,10 @@ export default function Home() {
   const analyserRef = useRef<ReturnType<typeof createAudioAnalyser> | null>(
     null,
   );
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+
   const [audioReady, setAudioReady] = useState(false);
+  const [recording, setRecording] = useState(false);
 
   const handleAudio = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -107,12 +111,27 @@ export default function Home() {
     <div className="view">
       <div className="controls-section-container">
         Hey
-        <input type="file" accept="audio/" onChange={handleAudio} />
+        <input
+          type="file"
+          accept="audio/*"
+          onChange={handleAudio}
+          disabled={recording}
+        />
         <audio
           ref={audioRef}
-          controls
+          controls={!recording}
           style={{ display: audioReady ? "block" : "none" }}
-        ></audio>
+        />
+        <button
+          className="record-button"
+          style={{ display: audioReady ? "block" : "none" }}
+          disabled={recording || !audioReady}
+          onClick={() =>
+            handleRecord(canvasRef, analyserRef, mediaRecorderRef, setRecording)
+          }
+        >
+          {recording ? "Recording..." : "Record!"}
+        </button>
       </div>
       <div className="canvas-section-container">
         <div className="canvas-container" ref={canvasRef}></div>
