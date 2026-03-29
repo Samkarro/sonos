@@ -4,6 +4,7 @@ import "./editor.styles.css";
 import * as PIXI from "pixi.js";
 import { createAudioAnalyser } from "@/utils/audio-analyzer";
 import { handleRecord } from "@/utils/handle-recording";
+import { barHeightCalculator } from "@/utils/calculate-slope";
 
 const CANVAS_WIDTH = 1920;
 const CANVAS_HEIGHT = 1080;
@@ -84,7 +85,7 @@ export default function Home() {
 
       for (let i = 0; i < analyser.bufferLength - 30; i++) {
         const value = analyser.dataArray[i];
-        const height = 2 + (value / 255) * (CANVAS_HEIGHT * 0.8);
+        const height = barHeightCalculator(value, CANVAS_HEIGHT);
 
         const bar = bars[i];
         bar.clear();
