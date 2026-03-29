@@ -18,7 +18,7 @@ export const createAudioAnalyser = (audio: HTMLAudioElement): AudioAnalyser => {
   const gainNode = context.createGain();
 
   analyser.fftSize = 256;
-
+  analyser.smoothingTimeConstant = 0.9;
   source.connect(analyser);
   analyser.connect(gainNode);
   gainNode.connect(context.destination);
