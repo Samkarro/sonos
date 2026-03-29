@@ -68,30 +68,30 @@ export default function Home() {
     analyserRef.current = analyser;
 
     const bars: PIXI.Graphics[] = [];
-    const barWidth = (CANVAS_WIDTH / analyser.bufferLength) * 0.95;
+    const NUM_BARS = 32 * 2;
+    const GAP = 5;
+    const barWidth = (CANVAS_WIDTH - GAP * NUM_BARS) / NUM_BARS;
+    const smoothed = new Float32Array(NUM_BARS);
 
-    for (let i = 0; i < analyser.bufferLength; i++) {
+    for (let i = 0; i < NUM_BARS; i++) {
       const bar = new PIXI.Graphics();
-      bar.x = i * barWidth;
+      bar.x = i * (barWidth + GAP);
       bar.y = CANVAS_HEIGHT;
       bars.push(bar);
       barContainer.addChild(bar);
     }
 
     app.ticker.add(() => {
-      analyser.analyser.getByteFrequencyData(
-        analyser.dataArray as Uint8Array<ArrayBuffer>,
-      );
+      for (let i = 0; i < NUM_BARS; i++) {
+        const target = analyser.dataArray[i];
+        smoothed[i] = smoothed[i] + (target - smoothed[i]) * 0.1;
 
-      for (let i = 0; i < analyser.bufferLength - 30; i++) {
-        const value = analyser.dataArray[i];
-        const height = barHeightCalculator(value, CANVAS_HEIGHT);
-
+        const height = barHeightCalculator(smoothed[i], CANVAS_HEIGHT);
         const bar = bars[i];
         bar.clear();
         bar.beginFill(0xffffff);
         bar.drawRect(0, -height, barWidth - 2, height);
-        bar.x = i * (barWidth + 5);
+        bar.x = i * (barWidth + GAP);
         bar.endFill();
       }
     });
