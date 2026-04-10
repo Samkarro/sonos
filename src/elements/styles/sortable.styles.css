@@ -1,0 +1,35 @@
+.canvas-element-list-item {
+  padding: 5px 10px;
+  border: 1px solid gray;
+  border-radius: 15px;
+  width: 80%;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: 200ms;
+}
+
+.canvas-element-list-item p {
+  width: 100%;
+  text-align: center;
+}
+
+.canvas-element-list-item:hover {
+  cursor: grab;
+  background-color: rgb(26, 26, 26);
+}
+
+.canvas-element-list-item:active,
+.canvas-element-list-item.dragging {
+  background-color: rgb(61, 61, 61);
+}
+
+.canvas-element-list-item::before {
+  display: none;
+}
+
+.canvas-item-list-action-button {
+  height: 25px;
+  width: 25px;
+}

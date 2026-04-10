@@ -148,6 +148,7 @@ export default function Home() {
                 id={item.id}
                 index={index}
                 name={item.name}
+                setCanvasElements={setCanvasElements}
               />
             ))}
           </ul>
