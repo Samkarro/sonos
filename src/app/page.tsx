@@ -10,6 +10,7 @@ import {
   VisualizerInstance,
 } from "@/utils/create-visualizer";
 import { Sortable } from "@/elements/sortable";
+import { AddElementSection } from "@/elements/add-element-section";
 
 const CANVAS_WIDTH = 1920;
 const CANVAS_HEIGHT = 1080;
@@ -60,6 +61,9 @@ export default function Home() {
       type: "misc",
     },
   ]);
+
+  const [showAddElementScreen, setShowAddElementScreen] =
+    useState<boolean>(false);
 
   const handleAudio = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -150,22 +154,38 @@ export default function Home() {
         >
           {recording ? "Recording..." : "Record!"}
         </button>
-        <ul className="canvas-element-list">
-          {canvasElements.map((item, index) => (
-            <Sortable
-              key={item.id}
-              id={item.id}
-              index={index}
-              name={item.name}
-              setCanvasElements={setCanvasElements}
-              visualizerInstancesRef={visualizerInstancesRef}
-            />
-          ))}
-        </ul>
+        <div className="canvas-element-list-container">
+          <button
+            className="add-element-button"
+            onClick={() => setShowAddElementScreen(true)}
+          >
+            Add Element
+          </button>
+          <ul className="canvas-element-list">
+            {canvasElements.map((item, index) => (
+              <Sortable
+                key={item.id}
+                id={item.id}
+                index={index}
+                name={item.name}
+                setCanvasElements={setCanvasElements}
+                visualizerInstancesRef={visualizerInstancesRef}
+              />
+            ))}
+          </ul>
+        </div>
       </div>
       <div className="canvas-section-container">
         <div className="canvas-container" ref={canvasRef}></div>
       </div>
+      {showAddElementScreen && (
+        <div
+          className="add-element-section-overlay"
+          onClick={() => setShowAddElementScreen(false)}
+        >
+          <AddElementSection />
+        </div>
+      )}
     </div>
   );
 }
