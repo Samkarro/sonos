@@ -5,6 +5,7 @@ import * as PIXI from "pixi.js";
 import { createAudioAnalyser } from "@/utils/audio-analyzer";
 import { handleRecord } from "@/utils/handle-recording";
 import { barHeightCalculator } from "@/utils/calculate-slope";
+import { Sortable } from "@/elements/sortable";
 
 const CANVAS_WIDTH = 1920;
 const CANVAS_HEIGHT = 1080;
@@ -19,6 +20,12 @@ export default function Home() {
 
   const [audioReady, setAudioReady] = useState(false);
   const [recording, setRecording] = useState(false);
+  const [canvasElements, setCanvasElements] = useState<
+    { id: number; name: string }[]
+  >([
+    { id: 1, name: "test1" },
+    { id: 2, name: "test2" },
+  ]);
 
   const handleAudio = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -133,6 +140,18 @@ export default function Home() {
         >
           {recording ? "Recording..." : "Record!"}
         </button>
+        <div className="canvas-element-list-container">
+          <ul className="canvas-element-list">
+            {canvasElements.map((item, index) => (
+              <Sortable
+                key={item.id}
+                id={item.id}
+                index={index}
+                name={item.name}
+              />
+            ))}
+          </ul>
+        </div>
       </div>
       <div className="canvas-section-container">
         <div className="canvas-container" ref={canvasRef}></div>
