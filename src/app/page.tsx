@@ -183,7 +183,7 @@ export default function Home() {
           className="add-element-section-overlay"
           onClick={() => setShowAddElementScreen(false)}
         >
-          <AddElementSection />
+          <AddElementSection setCanvasElements={setCanvasElements} />
         </div>
       )}
     </div>

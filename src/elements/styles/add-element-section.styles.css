@@ -1,0 +1,86 @@
+.add-element-section-container {
+  display: flex;
+  flex-direction: column;
+  padding: 40px;
+  width: 1000px;
+  background-color: var(--background);
+  border: 1px solid rgb(66, 66, 66);
+  border-radius: 20px;
+}
+
+.add-element-tab-button-container {
+  margin-top: 20px;
+  display: flex;
+  gap: 15px;
+}
+
+.add-element-tab-button {
+  padding: 8px 20px;
+  border-bottom: 1px solid rgb(66, 66, 66);
+  transition: 200ms;
+}
+
+.add-element-tab-button:hover {
+  background-color: rgb(22, 22, 22);
+}
+
+.add-element-tab-button:active {
+  background-color: rgb(100, 100, 100);
+  transition: 50ms;
+}
+
+.add-element-tab-button.tab-button-active {
+  background-color: rgb(66, 66, 66);
+}
+
+.add-element-tab-button.tab-button-active:hover {
+  background-color: rgb(80, 80, 80);
+}
+
+.add-element-tab-button.tab-button-active:active {
+  background-color: rgb(100, 100, 100);
+  transition: 50ms;
+}
+
+.creation-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.add-element-input-container {
+  display: flex;
+  gap: 5px;
+  flex-direction: column;
+}
+
+.add-element-input {
+  padding: 10px 20px;
+  border: 1px solid rgb(66, 66, 66);
+  border-radius: 10px;
+}
+
+.grid-2 {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.add-button {
+  padding: 10px 20px;
+  background-color: rgb(19, 34, 19);
+  border: 1px solid rgb(51, 90, 51);
+
+  width: 10%;
+  border-radius: 10px;
+  transition: 200ms;
+  font-weight: bold;
+  align-self: center;
+}
+
+.add-button:hover {
+  border: 1px solid rgb(51, 90, 51);
+  background-color: rgb(36, 63, 36);
+  border-radius: 10px;
+  transition: 200ms;
+}
