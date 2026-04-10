@@ -4,11 +4,29 @@ import "./editor.styles.css";
 import * as PIXI from "pixi.js";
 import { createAudioAnalyser } from "@/utils/audio-analyzer";
 import { handleRecord } from "@/utils/handle-recording";
-import { barHeightCalculator } from "@/utils/calculate-slope";
+import {
+  createVisualizer,
+  VisualizerConfig,
+  VisualizerInstance,
+} from "@/utils/create-visualizer";
 import { Sortable } from "@/elements/sortable";
 
 const CANVAS_WIDTH = 1920;
 const CANVAS_HEIGHT = 1080;
+
+const DEFAULT_VISUALIZER_CONFIG: VisualizerConfig = {
+  numBars: 64,
+  width: CANVAS_WIDTH,
+  height: CANVAS_HEIGHT,
+  gap: 5,
+};
+
+export type CanvasElement = {
+  id: number;
+  name: string;
+  type: string;
+  config?: VisualizerConfig;
+};
 
 export default function Home() {
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -17,14 +35,30 @@ export default function Home() {
     null,
   );
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const visualizerInstancesRef = useRef<Map<number, VisualizerInstance>>(
+    new Map(),
+  );
+  const appRef = useRef<PIXI.Application | null>(null);
 
   const [audioReady, setAudioReady] = useState(false);
   const [recording, setRecording] = useState(false);
-  const [canvasElements, setCanvasElements] = useState<
-    { id: number; name: string }[]
-  >([
-    { id: 1, name: "test1" },
-    { id: 2, name: "test2" },
+  const [canvasElements, setCanvasElements] = useState<CanvasElement[]>([
+    {
+      id: 1,
+      name: "Visualizer",
+      type: "visualizer",
+      config: DEFAULT_VISUALIZER_CONFIG,
+    },
+    {
+      id: 2,
+      name: "misc",
+      type: "misc",
+    },
+    {
+      id: 3,
+      name: "misc",
+      type: "misc",
+    },
   ]);
 
   const handleAudio = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,7 +66,6 @@ export default function Home() {
     if (!file || !analyserRef.current) return;
 
     const maxSize = 50 * 1024 * 1024;
-
     if (file.size > maxSize) {
       alert("File size exceeds the limit of 50MB.");
       e.target.value = "";
@@ -44,13 +77,11 @@ export default function Home() {
 
     temp.addEventListener("loadedmetadata", () => {
       URL.revokeObjectURL(url);
-
       if (temp.duration > 15 * 60) {
         alert("Audio length exceeds the limit of 15 minutes.");
         e.target.value = "";
         return;
       }
-
       analyserRef.current!.loadFile(file);
       setAudioReady(true);
     });
@@ -65,41 +96,19 @@ export default function Home() {
       autoDensity: true,
       resolution: 1,
     });
+    appRef.current = app;
 
     canvasRef.current.appendChild(app.view as HTMLCanvasElement);
-
-    const barContainer = new PIXI.Container();
-    app.stage.addChild(barContainer);
 
     const analyser = createAudioAnalyser(audioRef.current);
     analyserRef.current = analyser;
 
-    const bars: PIXI.Graphics[] = [];
-    const NUM_BARS = 32 * 2;
-    const GAP = 5;
-    const barWidth = (CANVAS_WIDTH - GAP * NUM_BARS) / NUM_BARS;
-    const smoothed = new Float32Array(NUM_BARS);
-
-    for (let i = 0; i < NUM_BARS; i++) {
-      const bar = new PIXI.Graphics();
-      bar.x = i * (barWidth + GAP);
-      bar.y = CANVAS_HEIGHT;
-      bars.push(bar);
-      barContainer.addChild(bar);
-    }
-
-    app.ticker.add(() => {
-      for (let i = 0; i < NUM_BARS; i++) {
-        const target = analyser.dataArray[i];
-        smoothed[i] = smoothed[i] + (target - smoothed[i]) * 0.1;
-
-        const height = barHeightCalculator(smoothed[i], CANVAS_HEIGHT);
-        const bar = bars[i];
-        bar.clear();
-        bar.beginFill(0xffffff);
-        bar.drawRect(0, -height, barWidth - 2, height);
-        bar.x = i * (barWidth + GAP);
-        bar.endFill();
+    // Create initial visualizer from starting state
+    canvasElements.forEach((el) => {
+      if (el.type === "visualizer" && el.config) {
+        const instance = createVisualizer(app, analyser, el.config);
+        app.stage.addChild(instance.container);
+        visualizerInstancesRef.current.set(el.id, instance);
       }
     });
 
@@ -110,6 +119,8 @@ export default function Home() {
     };
 
     return () => {
+      visualizerInstancesRef.current.forEach((v) => v.destroy());
+      visualizerInstancesRef.current.clear();
       analyser.destroy();
       app.destroy(true);
     };
@@ -118,7 +129,6 @@ export default function Home() {
   return (
     <div className="view">
       <div className="controls-section-container">
-        Hey
         <input
           type="file"
           accept="audio/*"
@@ -140,19 +150,18 @@ export default function Home() {
         >
           {recording ? "Recording..." : "Record!"}
         </button>
-        <div className="canvas-element-list-container">
-          <ul className="canvas-element-list">
-            {canvasElements.map((item, index) => (
-              <Sortable
-                key={item.id}
-                id={item.id}
-                index={index}
-                name={item.name}
-                setCanvasElements={setCanvasElements}
-              />
-            ))}
-          </ul>
-        </div>
+        <ul className="canvas-element-list">
+          {canvasElements.map((item, index) => (
+            <Sortable
+              key={item.id}
+              id={item.id}
+              index={index}
+              name={item.name}
+              setCanvasElements={setCanvasElements}
+              visualizerInstancesRef={visualizerInstancesRef}
+            />
+          ))}
+        </ul>
       </div>
       <div className="canvas-section-container">
         <div className="canvas-container" ref={canvasRef}></div>
