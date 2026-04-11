@@ -36,7 +36,8 @@ export const createVisualizer = (
 
   const tick = () => {
     for (let i = 0; i < numBars; i++) {
-      const target = analyser.dataArray[i % analyser.bufferLength];
+      const bandIndex = Math.floor((i / numBars) * analyser.bufferLength);
+      const target = analyser.dataArray[bandIndex];
       smoothed[i] = smoothed[i] + (target - smoothed[i]) * 0.1;
 
       const barHeight = barHeightCalculator(smoothed[i], height);
