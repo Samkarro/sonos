@@ -62,6 +62,25 @@ export default function Home() {
     },
   ]);
 
+  const addElement = (element: CanvasElement) => {
+    setCanvasElements((prev) => [...prev, element]);
+
+    if (
+      element.type === "visualizer" &&
+      element.config &&
+      appRef.current &&
+      analyserRef.current
+    ) {
+      const instance = createVisualizer(
+        appRef.current,
+        analyserRef.current,
+        element.config,
+      );
+      appRef.current.stage.addChild(instance.container);
+      visualizerInstancesRef.current.set(element.id, instance);
+    }
+  };
+
   const [showAddElementScreen, setShowAddElementScreen] =
     useState<boolean>(false);
 
@@ -183,7 +202,7 @@ export default function Home() {
           className="add-element-section-overlay"
           onClick={() => setShowAddElementScreen(false)}
         >
-          <AddElementSection setCanvasElements={setCanvasElements} />
+          <AddElementSection addElement={addElement} />
         </div>
       )}
     </div>
