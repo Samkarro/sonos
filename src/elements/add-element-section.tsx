@@ -3,21 +3,21 @@ import { Dispatch, SetStateAction, useState } from "react";
 import "./styles/add-element-section.styles.css";
 import { CanvasElement } from "@/app/page";
 import { VisualizerCreationTab } from "./tabs/create-vis";
-import { MiscCreationTab } from "./tabs/create-misc";
+import { ShapeCreationTab } from "./tabs/create-shape";
 
-const TABS = ["visualizer", "misc"] as const;
+const TABS = ["visualizer", "shape"] as const;
 type Tab = (typeof TABS)[number];
 
 export const AddElementSection = ({
   addElement,
 }: {
-  addElement: (el: CanvasElement) => void;
+  addElement: (el: Omit<CanvasElement, "id">) => void;
 }) => {
   const [activeTab, setActiveTab] = useState<Tab>(TABS[0]);
 
   const TAB_COMPONENTS: Record<Tab, React.ReactNode> = {
     visualizer: <VisualizerCreationTab addElement={addElement} />,
-    misc: <MiscCreationTab addElement={addElement} />,
+    shape: <ShapeCreationTab addElement={addElement} />,
   };
 
   return (

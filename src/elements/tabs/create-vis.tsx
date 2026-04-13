@@ -1,47 +1,29 @@
-
-"use client"
+"use client";
 
 import { CanvasElement } from "@/app/page";
 import { useState } from "react";
 
+const DEFAULTS = {
+  BAR_COUNT: 40,
+  WIDTH: 1920,
+  HEIGHT: 1080,
+  GAP: 5,
+};
+
 export const VisualizerCreationTab = ({
   addElement,
 }: {
-  addElement: (el: CanvasElement) => void;
+  addElement: (el: Omit<CanvasElement, "id">) => void;
 }) => {
-  const [id, setId] = useState(0);
-  const [type, setType] = useState("");
   const [name, setName] = useState("");
 
-  const [numBars, setNumBars] = useState(0);
-  const [width, setWidth] = useState(0);
-  const [height, setHeight] = useState(0);
-  const [gap, setGap] = useState(0);
+  const [numBars, setNumBars] = useState(DEFAULTS.BAR_COUNT);
+  const [width, setWidth] = useState(DEFAULTS.WIDTH);
+  const [height, setHeight] = useState(DEFAULTS.HEIGHT);
+  const [gap, setGap] = useState(DEFAULTS.GAP);
 
   return (
     <div className="creation-tab">
-      <div className="grid-2">
-        <div className="add-element-input-container">
-          <label htmlFor="id">ID</label>
-          <input
-            className="add-element-input"
-            type="number"
-            name="id"
-            value={id}
-            onChange={(e) => setId(parseInt(e.target.value))}
-          />
-        </div>
-        <div className="add-element-input-container">
-          <label htmlFor="type">type</label>
-          <input
-            className="add-element-input"
-            type="text"
-            name="type"
-            value={type}
-            onChange={(e) => setType(e.target.value)}
-          />
-        </div>
-      </div>
       <div className="add-element-input-container">
         <label htmlFor="name">Name</label>
         <input
@@ -100,8 +82,7 @@ export const VisualizerCreationTab = ({
         className="add-button clickable"
         onClick={() =>
           addElement({
-            id,
-            type,
+            type: "visualizer",
             name,
             config: { numBars, width, height, gap },
           })

@@ -5,11 +5,11 @@ import { CanvasElement } from "@/app/page";
 import { VisualizerInstance } from "@/utils/create-visualizer";
 
 interface SortableProps {
-  id: number;
+  id: string;
   index: number;
   name: string;
   setCanvasElements: Dispatch<SetStateAction<CanvasElement[]>>;
-  visualizerInstancesRef: RefObject<Map<number, VisualizerInstance>>;
+  visualizerInstancesRef: RefObject<Map<string, VisualizerInstance>>;
 }
 
 export const Sortable = ({

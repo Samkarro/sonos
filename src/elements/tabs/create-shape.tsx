@@ -2,10 +2,10 @@
 import { CanvasElement } from "@/app/page";
 import { useState } from "react";
 
-export const MiscCreationTab = ({
+export const ShapeCreationTab = ({
   addElement,
 }: {
-  addElement: (el: CanvasElement) => void;
+  addElement: (el: Omit<CanvasElement, "id">) => void;
 }) => {
   const [id, setId] = useState(0);
   const [type, setType] = useState("");
@@ -47,7 +47,7 @@ export const MiscCreationTab = ({
       </div>
       <button
         className="add-button clickable"
-        onClick={() => addElement({ id, type, name })}
+        onClick={() => addElement({ type, name })}
       >
         Add
       </button>

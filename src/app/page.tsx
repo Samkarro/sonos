@@ -11,6 +11,7 @@ import {
 } from "@/utils/create-visualizer";
 import { Sortable } from "@/elements/sortable";
 import { AddElementSection } from "@/elements/add-element-section";
+import { UUID } from "crypto";
 
 const CANVAS_WIDTH = 1920;
 const CANVAS_HEIGHT = 1080;
@@ -23,7 +24,7 @@ const DEFAULT_VISUALIZER_CONFIG: VisualizerConfig = {
 };
 
 export type CanvasElement = {
-  id: number;
+  id: string;
   name: string;
   type: string;
   config?: VisualizerConfig;
@@ -36,34 +37,20 @@ export default function Home() {
     null,
   );
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const visualizerInstancesRef = useRef<Map<number, VisualizerInstance>>(
+  const visualizerInstancesRef = useRef<Map<string, VisualizerInstance>>(
     new Map(),
   );
   const appRef = useRef<PIXI.Application | null>(null);
 
   const [audioReady, setAudioReady] = useState(false);
   const [recording, setRecording] = useState(false);
-  const [canvasElements, setCanvasElements] = useState<CanvasElement[]>([
-    {
-      id: 1,
-      name: "Visualizer",
-      type: "visualizer",
-      config: DEFAULT_VISUALIZER_CONFIG,
-    },
-    {
-      id: 2,
-      name: "misc",
-      type: "misc",
-    },
-    {
-      id: 3,
-      name: "misc",
-      type: "misc",
-    },
-  ]);
+  const [canvasElements, setCanvasElements] = useState<CanvasElement[]>([]);
 
-  const addElement = (element: CanvasElement) => {
-    setCanvasElements((prev) => [...prev, element]);
+  const addElement = (element: Omit<CanvasElement, "id">) => {
+    const id = crypto.randomUUID();
+    const elementWithId = { ...element, id };
+
+    setCanvasElements((prev) => [...prev, elementWithId]);
 
     if (
       element.type === "visualizer" &&
@@ -77,7 +64,7 @@ export default function Home() {
         element.config,
       );
       appRef.current.stage.addChild(instance.container);
-      visualizerInstancesRef.current.set(element.id, instance);
+      visualizerInstancesRef.current.set(id, instance);
     }
   };
 
