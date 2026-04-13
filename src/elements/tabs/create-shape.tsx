@@ -19,6 +19,7 @@ export const ShapeCreationTab = ({
   const [height, setHeight] = useState(100);
   const [borderRadius, setBorderRadius] = useState(0);
   const [fill, setFill] = useState("#ffffff");
+  const [imageSrc, setImageSrc] = useState<string | undefined>();
 
   return (
     <div className="creation-tab">
@@ -100,6 +101,20 @@ export const ShapeCreationTab = ({
           </div>
         )}
         <ColorPicker color={fill} onChange={setFill} />
+        <div className="add-element-input-container">
+          <label>Image fill (optional)</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+              const reader = new FileReader();
+              reader.onload = () => setImageSrc(reader.result as string);
+              reader.readAsDataURL(file);
+            }}
+          />
+        </div>
       </div>
 
       <button
@@ -108,7 +123,16 @@ export const ShapeCreationTab = ({
           addElement({
             type: "shape",
             name,
-            shapeConfig: { shapeType, x, y, width, height, borderRadius, fill },
+            shapeConfig: {
+              shapeType,
+              x,
+              y,
+              width,
+              height,
+              borderRadius,
+              fill,
+              imageSrc,
+            },
           })
         }
       >

@@ -6,4 +6,5 @@ export type ShapeConfig = {
   height: number;
   borderRadius: number;
   fill: string;
+  imageSrc?: string;
 };
