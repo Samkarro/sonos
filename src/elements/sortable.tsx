@@ -1,15 +1,14 @@
 import { useSortable } from "@dnd-kit/react/sortable";
 import "./styles/sortable.styles.css";
 import { Dispatch, RefObject, SetStateAction } from "react";
-import { CanvasElement } from "@/app/page";
-import { VisualizerInstance } from "@/utils/create-visualizer";
+import { CanvasElement, PixiInstance } from "@/app/page";
 
 interface SortableProps {
   id: string;
   index: number;
   name: string;
   setCanvasElements: Dispatch<SetStateAction<CanvasElement[]>>;
-  visualizerInstancesRef: RefObject<Map<string, VisualizerInstance>>;
+  visualizerInstancesRef: RefObject<Map<string, PixiInstance>>;
 }
 
 export const Sortable = ({

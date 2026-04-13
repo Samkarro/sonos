@@ -1,6 +1,7 @@
 import * as PIXI from "pixi.js";
 import { AudioAnalyser } from "./audio-analyzer";
 import { barHeightCalculator } from "./calculate-slope";
+import { PixiInstance } from "@/app/page";
 
 export type VisualizerConfig = {
   numBars: number;
@@ -9,16 +10,11 @@ export type VisualizerConfig = {
   gap: number;
 };
 
-export type VisualizerInstance = {
-  container: PIXI.Container;
-  destroy: () => void;
-};
-
 export const createVisualizer = (
   app: PIXI.Application,
   analyser: AudioAnalyser,
   config: VisualizerConfig,
-): VisualizerInstance => {
+): PixiInstance => {
   const { numBars, width, height, gap } = config;
 
   const container = new PIXI.Container();

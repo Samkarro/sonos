@@ -4,17 +4,21 @@ import "./editor.styles.css";
 import * as PIXI from "pixi.js";
 import { createAudioAnalyser } from "@/utils/audio-analyzer";
 import { handleRecord } from "@/utils/handle-recording";
-import {
-  createVisualizer,
-  VisualizerConfig,
-  VisualizerInstance,
-} from "@/utils/create-visualizer";
+import { createVisualizer, VisualizerConfig } from "@/utils/create-visualizer";
 import { Sortable } from "@/elements/sortable";
 import { AddElementSection } from "@/elements/add-element-section";
 import { ShapeConfig } from "@/elements/tabs/create-shape";
+import { CreateShape } from "@/utils/create-shape";
+import { move } from "@dnd-kit/helpers";
+import { DragDropProvider } from "@dnd-kit/react";
 
 const CANVAS_WIDTH = 1920;
 const CANVAS_HEIGHT = 1080;
+
+export type PixiInstance = {
+  container: PIXI.Container;
+  destroy: () => void;
+};
 
 export type CanvasElement = {
   id: string;
@@ -31,9 +35,7 @@ export default function Home() {
     null,
   );
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const visualizerInstancesRef = useRef<Map<string, VisualizerInstance>>(
-    new Map(),
-  );
+  const visualizerInstancesRef = useRef<Map<string, PixiInstance>>(new Map());
   const appRef = useRef<PIXI.Application | null>(null);
 
   const [audioReady, setAudioReady] = useState(false);
@@ -44,7 +46,7 @@ export default function Home() {
     const id = crypto.randomUUID();
     const elementWithId = { ...element, id };
 
-    setCanvasElements((prev) => [...prev, elementWithId]);
+    setCanvasElements((prev) => [elementWithId, ...prev]);
 
     if (
       element.type === "visualizer" &&
@@ -57,6 +59,14 @@ export default function Home() {
         analyserRef.current,
         element.config,
       );
+      appRef.current.stage.addChild(instance.container);
+      visualizerInstancesRef.current.set(id, instance);
+    } else if (
+      element.type === "shape" &&
+      element.shapeConfig &&
+      appRef.current
+    ) {
+      const instance = CreateShape(appRef.current, element.shapeConfig);
       appRef.current.stage.addChild(instance.container);
       visualizerInstancesRef.current.set(id, instance);
     }
@@ -91,6 +101,10 @@ export default function Home() {
     });
   };
 
+  const handleDragEnd = (event: any) => {
+    setCanvasElements((prev) => move(prev, event));
+  };
+
   useEffect(() => {
     if (!canvasRef.current || !audioRef.current) return;
 
@@ -101,6 +115,7 @@ export default function Home() {
       resolution: 1,
     });
     appRef.current = app;
+    app.stage.sortableChildren = true;
 
     canvasRef.current.appendChild(app.view as HTMLCanvasElement);
 
@@ -129,6 +144,23 @@ export default function Home() {
       app.destroy(true);
     };
   }, []);
+
+  useEffect(() => {
+    const app = appRef.current;
+    if (!app) return;
+
+    const total = canvasElements.length;
+    let zIndex = 0;
+    canvasElements.forEach((el) => {
+      const instance = visualizerInstancesRef.current.get(el.id);
+      if (instance) {
+        instance.container.zIndex = total - zIndex;
+        zIndex++;
+      }
+    });
+
+    app.stage.sortChildren();
+  }, [canvasElements]);
 
   return (
     <div className="view">
@@ -161,18 +193,20 @@ export default function Home() {
           >
             Add Element
           </button>
-          <ul className="canvas-element-list">
-            {canvasElements.map((item, index) => (
-              <Sortable
-                key={item.id}
-                id={item.id}
-                index={index}
-                name={item.name}
-                setCanvasElements={setCanvasElements}
-                visualizerInstancesRef={visualizerInstancesRef}
-              />
-            ))}
-          </ul>
+          <DragDropProvider onDragEnd={handleDragEnd}>
+            <ul className="canvas-element-list">
+              {canvasElements.map((item, index) => (
+                <Sortable
+                  key={item.id}
+                  id={item.id}
+                  index={index}
+                  name={item.name}
+                  setCanvasElements={setCanvasElements}
+                  visualizerInstancesRef={visualizerInstancesRef}
+                />
+              ))}
+            </ul>
+          </DragDropProvider>
         </div>
       </div>
       <div className="canvas-section-container">
