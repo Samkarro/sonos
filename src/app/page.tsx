@@ -13,6 +13,7 @@ import { handleAudioUpload } from "@/utils/helpers/handle-audio-upload";
 import { handleDragEnd } from "@/utils/helpers/handle-drag-end";
 import { PixiInstance } from "@/types/pixi-instance.types";
 import { CanvasElement } from "@/types/canvas-element.types";
+import { createText } from "@/utils/create-text";
 
 const CANVAS_WIDTH = 1920;
 const CANVAS_HEIGHT = 1080;
@@ -56,6 +57,14 @@ export default function Home() {
       appRef.current
     ) {
       const instance = CreateShape(appRef.current, element.shapeConfig);
+      appRef.current.stage.addChild(instance.container);
+      visualizerInstancesRef.current.set(id, instance);
+    } else if (
+      element.type === "text" &&
+      element.textConfig &&
+      appRef.current
+    ) {
+      const instance = createText(appRef.current, element.textConfig);
       appRef.current.stage.addChild(instance.container);
       visualizerInstancesRef.current.set(id, instance);
     }

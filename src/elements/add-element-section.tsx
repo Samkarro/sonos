@@ -4,8 +4,9 @@ import "./styles/add-element-section.styles.css";
 import { VisualizerCreationTab } from "./tabs/create-vis";
 import { ShapeCreationTab } from "./tabs/create-shape";
 import { CanvasElement } from "@/types/canvas-element.types";
+import { TextCreationTab } from "./tabs/create-text";
 
-const TABS = ["visualizer", "shape"] as const;
+const TABS = ["visualizer", "shape", "text"] as const;
 type Tab = (typeof TABS)[number];
 
 export const AddElementSection = ({
@@ -18,6 +19,7 @@ export const AddElementSection = ({
   const TAB_COMPONENTS: Record<Tab, React.ReactNode> = {
     visualizer: <VisualizerCreationTab addElement={addElement} />,
     shape: <ShapeCreationTab addElement={addElement} />,
+    text: <TextCreationTab addElement={addElement} />,
   };
 
   return (

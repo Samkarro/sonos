@@ -1,5 +1,6 @@
-import { ShapeConfig } from "@/elements/tabs/create-shape";
 import { VisualizerConfig } from "@/utils/create-visualizer";
+import { ShapeConfig } from "./shape-config.types";
+import { TextConfig } from "./text-config.types";
 
 export type CanvasElement = {
   id: string;
@@ -7,4 +8,5 @@ export type CanvasElement = {
   type: string;
   config?: VisualizerConfig;
   shapeConfig?: ShapeConfig;
+  textConfig?: TextConfig;
 };
