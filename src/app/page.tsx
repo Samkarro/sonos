@@ -11,23 +11,17 @@ import {
 } from "@/utils/create-visualizer";
 import { Sortable } from "@/elements/sortable";
 import { AddElementSection } from "@/elements/add-element-section";
-import { UUID } from "crypto";
+import { ShapeConfig } from "@/elements/tabs/create-shape";
 
 const CANVAS_WIDTH = 1920;
 const CANVAS_HEIGHT = 1080;
-
-const DEFAULT_VISUALIZER_CONFIG: VisualizerConfig = {
-  numBars: 64,
-  width: CANVAS_WIDTH,
-  height: CANVAS_HEIGHT,
-  gap: 5,
-};
 
 export type CanvasElement = {
   id: string;
   name: string;
   type: string;
   config?: VisualizerConfig;
+  shapeConfig?: ShapeConfig;
 };
 
 export default function Home() {

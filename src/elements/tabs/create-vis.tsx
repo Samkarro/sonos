@@ -4,7 +4,7 @@ import { CanvasElement } from "@/app/page";
 import { useState } from "react";
 
 const DEFAULTS = {
-  BAR_COUNT: 40,
+  BAR_COUNT: 64,
   WIDTH: 1920,
   HEIGHT: 1080,
   GAP: 5,
