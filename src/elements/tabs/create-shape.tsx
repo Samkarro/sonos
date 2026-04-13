@@ -1,20 +1,10 @@
 "use client";
-import { CanvasElement } from "@/app/page";
-import { useEffect, useRef, useState } from "react";
-import { HexColorPicker } from "react-colorful";
+import { CanvasElement } from "@/types/canvas-element.types";
+import { useState } from "react";
+import { ColorPicker } from "../color-picker";
 
 const SHAPE_TYPES = ["rectangle", "ellipse"] as const;
 type ShapeType = (typeof SHAPE_TYPES)[number];
-
-export type ShapeConfig = {
-  shapeType: "rectangle" | "ellipse";
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  borderRadius: number;
-  fill: string;
-};
 
 export const ShapeCreationTab = ({
   addElement,
@@ -29,24 +19,6 @@ export const ShapeCreationTab = ({
   const [height, setHeight] = useState(100);
   const [borderRadius, setBorderRadius] = useState(0);
   const [fill, setFill] = useState("#ffffff");
-  const [showPicker, setShowPicker] = useState(false);
-  const pickerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
-        setShowPicker(false);
-      }
-    };
-
-    if (showPicker) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [showPicker]);
 
   return (
     <div className="creation-tab">
@@ -127,36 +99,7 @@ export const ShapeCreationTab = ({
             />
           </div>
         )}
-        {/* TODO: Refactor this into its own tsx later */}
-        <div className="add-element-input-container">
-          <label>Color</label>
-          <button
-            className="color-swatch-button clickable"
-            style={{ backgroundColor: fill }}
-            onClick={() => setShowPicker((prev) => !prev)}
-          />
-          {showPicker && (
-            <div
-              className="color-picker-overlay"
-              onClick={(e) => e.stopPropagation()}
-              ref={pickerRef}
-            >
-              <HexColorPicker color={fill} onChange={setFill} />
-              <input
-                className="add-element-input"
-                type="text"
-                value={fill}
-                onChange={(e) => setFill(e.target.value)}
-              />
-              <button
-                className="clickable"
-                onClick={() => setShowPicker(false)}
-              >
-                Done
-              </button>
-            </div>
-          )}
-        </div>
+        <ColorPicker color={fill} onChange={setFill} />
       </div>
 
       <button

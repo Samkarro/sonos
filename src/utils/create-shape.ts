@@ -1,5 +1,5 @@
-import { PixiInstance } from "@/app/page";
 import { ShapeConfig } from "@/elements/tabs/create-shape";
+import { PixiInstance } from "@/types/pixi-instance.types";
 import * as PIXI from "pixi.js";
 
 export const CreateShape = (

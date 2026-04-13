@@ -1,6 +1,6 @@
 "use client";
 
-import { CanvasElement } from "@/app/page";
+import { CanvasElement } from "@/types/canvas-element.types";
 import { useState } from "react";
 
 const DEFAULTS = {

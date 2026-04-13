@@ -1,5 +1,5 @@
 import { Dispatch, RefObject, SetStateAction } from "react";
-import { AudioAnalyser } from "./audio-analyzer";
+import { AudioAnalyser } from "../audio-analyzer";
 
 export const handleRecord = async (
   canvasRef: RefObject<HTMLDivElement | null>,

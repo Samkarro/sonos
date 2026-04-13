@@ -1,7 +1,7 @@
 import * as PIXI from "pixi.js";
 import { AudioAnalyser } from "./audio-analyzer";
 import { barHeightCalculator } from "./calculate-slope";
-import { PixiInstance } from "@/app/page";
+import { PixiInstance } from "@/types/pixi-instance.types";
 
 export type VisualizerConfig = {
   numBars: number;

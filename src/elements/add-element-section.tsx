@@ -1,9 +1,9 @@
 "use client";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import "./styles/add-element-section.styles.css";
-import { CanvasElement } from "@/app/page";
 import { VisualizerCreationTab } from "./tabs/create-vis";
 import { ShapeCreationTab } from "./tabs/create-shape";
+import { CanvasElement } from "@/types/canvas-element.types";
 
 const TABS = ["visualizer", "shape"] as const;
 type Tab = (typeof TABS)[number];

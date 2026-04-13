@@ -3,30 +3,19 @@ import { useEffect, useRef, useState } from "react";
 import "./editor.styles.css";
 import * as PIXI from "pixi.js";
 import { createAudioAnalyser } from "@/utils/audio-analyzer";
-import { handleRecord } from "@/utils/handle-recording";
-import { createVisualizer, VisualizerConfig } from "@/utils/create-visualizer";
+import { handleRecord } from "@/utils/helpers/handle-recording";
+import { createVisualizer } from "@/utils/create-visualizer";
 import { Sortable } from "@/elements/sortable";
 import { AddElementSection } from "@/elements/add-element-section";
-import { ShapeConfig } from "@/elements/tabs/create-shape";
 import { CreateShape } from "@/utils/create-shape";
-import { move } from "@dnd-kit/helpers";
 import { DragDropProvider } from "@dnd-kit/react";
+import { handleAudioUpload } from "@/utils/helpers/handle-audio-upload";
+import { handleDragEnd } from "@/utils/helpers/handle-drag-end";
+import { PixiInstance } from "@/types/pixi-instance.types";
+import { CanvasElement } from "@/types/canvas-element.types";
 
 const CANVAS_WIDTH = 1920;
 const CANVAS_HEIGHT = 1080;
-
-export type PixiInstance = {
-  container: PIXI.Container;
-  destroy: () => void;
-};
-
-export type CanvasElement = {
-  id: string;
-  name: string;
-  type: string;
-  config?: VisualizerConfig;
-  shapeConfig?: ShapeConfig;
-};
 
 export default function Home() {
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -74,36 +63,6 @@ export default function Home() {
 
   const [showAddElementScreen, setShowAddElementScreen] =
     useState<boolean>(false);
-
-  const handleAudio = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !analyserRef.current) return;
-
-    const maxSize = 50 * 1024 * 1024;
-    if (file.size > maxSize) {
-      alert("File size exceeds the limit of 50MB.");
-      e.target.value = "";
-      return;
-    }
-
-    const url = URL.createObjectURL(file);
-    const temp = new Audio(url);
-
-    temp.addEventListener("loadedmetadata", () => {
-      URL.revokeObjectURL(url);
-      if (temp.duration > 15 * 60) {
-        alert("Audio length exceeds the limit of 15 minutes.");
-        e.target.value = "";
-        return;
-      }
-      analyserRef.current!.loadFile(file);
-      setAudioReady(true);
-    });
-  };
-
-  const handleDragEnd = (event: any) => {
-    setCanvasElements((prev) => move(prev, event));
-  };
 
   useEffect(() => {
     if (!canvasRef.current || !audioRef.current) return;
@@ -168,7 +127,7 @@ export default function Home() {
         <input
           type="file"
           accept="audio/*"
-          onChange={handleAudio}
+          onChange={(e) => handleAudioUpload(e, analyserRef, setAudioReady)}
           disabled={recording}
         />
         <audio
@@ -193,7 +152,9 @@ export default function Home() {
           >
             Add Element
           </button>
-          <DragDropProvider onDragEnd={handleDragEnd}>
+          <DragDropProvider
+            onDragEnd={(e) => handleDragEnd(e, setCanvasElements)}
+          >
             <ul className="canvas-element-list">
               {canvasElements.map((item, index) => (
                 <Sortable

@@ -1,7 +1,8 @@
 import { useSortable } from "@dnd-kit/react/sortable";
 import "./styles/sortable.styles.css";
 import { Dispatch, RefObject, SetStateAction } from "react";
-import { CanvasElement, PixiInstance } from "@/app/page";
+import { CanvasElement } from "@/types/canvas-element.types";
+import { PixiInstance } from "@/types/pixi-instance.types";
 
 interface SortableProps {
   id: string;
