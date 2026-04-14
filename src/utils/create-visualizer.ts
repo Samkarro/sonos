@@ -8,6 +8,7 @@ export type VisualizerConfig = {
   width: number;
   height: number;
   gap: number;
+  fill: string;
 };
 
 export const createVisualizer = (
@@ -39,7 +40,7 @@ export const createVisualizer = (
       const barHeight = barHeightCalculator(smoothed[i], height);
       const bar = bars[i];
       bar.clear();
-      bar.beginFill(0xffffff);
+      bar.beginFill(config.fill);
       bar.drawRect(0, -barHeight, barWidth - 2, barHeight);
       bar.endFill();
     }

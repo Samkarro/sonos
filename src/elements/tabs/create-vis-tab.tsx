@@ -2,12 +2,14 @@
 
 import { CanvasElement } from "@/types/canvas-element.types";
 import { useState } from "react";
+import { ColorPicker } from "../color-picker";
 
 const DEFAULTS = {
   BAR_COUNT: 64,
   WIDTH: 1920,
   HEIGHT: 1080,
   GAP: 5,
+  FILL: "#ffffff",
 };
 
 export const VisualizerCreationTab = ({
@@ -21,6 +23,7 @@ export const VisualizerCreationTab = ({
   const [width, setWidth] = useState(DEFAULTS.WIDTH);
   const [height, setHeight] = useState(DEFAULTS.HEIGHT);
   const [gap, setGap] = useState(DEFAULTS.GAP);
+  const [fill, setFill] = useState(DEFAULTS.FILL);
 
   return (
     <div className="creation-tab">
@@ -78,13 +81,15 @@ export const VisualizerCreationTab = ({
           />
         </div>
       </div>
+      <ColorPicker color={fill} onChange={setFill} />
+
       <button
         className="add-button clickable"
         onClick={() =>
           addElement({
             type: "visualizer",
             name,
-            config: { numBars, width, height, gap },
+            config: { numBars, width, height, gap, fill },
           })
         }
       >
