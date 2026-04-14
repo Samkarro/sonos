@@ -1,10 +1,10 @@
 "use client";
 import { useState } from "react";
 import "./styles/add-element-section.styles.css";
-import { VisualizerCreationTab } from "./tabs/create-vis";
-import { ShapeCreationTab } from "./tabs/create-shape";
+import { VisualizerCreationTab } from "./tabs/create-vis-tab";
+import { ShapeCreationTab } from "./tabs/create-shape-tab";
 import { CanvasElement } from "@/types/canvas-element.types";
-import { TextCreationTab } from "./tabs/create-text";
+import { TextCreationTab } from "./tabs/create-text-tab";
 
 const TABS = ["visualizer", "shape", "text"] as const;
 type Tab = (typeof TABS)[number];
