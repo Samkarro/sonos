@@ -11,13 +11,34 @@ type Tab = (typeof TABS)[number];
 
 export const AddElementSection = ({
   addElement,
+  updateElement,
+  selectedElement,
 }: {
   addElement: (el: Omit<CanvasElement, "id">) => void;
+  updateElement?: (
+    id: string,
+    updates: Partial<Omit<CanvasElement, "id">>,
+  ) => void;
+  selectedElement: CanvasElement | null;
 }) => {
   const [activeTab, setActiveTab] = useState<Tab>(TABS[0]);
 
   const TAB_COMPONENTS: Record<Tab, React.ReactNode> = {
-    visualizer: <VisualizerCreationTab addElement={addElement} />,
+    visualizer: (
+      <VisualizerCreationTab
+        addElement={addElement}
+        updateElement={updateElement}
+        initialValues={
+          selectedElement?.type === "visualizer"
+            ? {
+                id: selectedElement.id,
+                name: selectedElement.name,
+                config: selectedElement.config!,
+              }
+            : undefined
+        }
+      />
+    ),
     shape: <ShapeCreationTab addElement={addElement} />,
     text: <TextCreationTab addElement={addElement} />,
   };
@@ -28,14 +49,20 @@ export const AddElementSection = ({
       onClick={(e) => e.stopPropagation()}
     >
       {/* TODO: verify if putting h1 here is okay for accessibility */}
-      <h1 className="add-element-heading">Create new element</h1>
+      <h1 className="add-element-heading">
+        {!selectedElement ? "Create" : "Update"} new element
+      </h1>
       <div className="add-element-tab-button-container">
         {TABS.map((val) => {
           return (
             <div
               key={val}
-              className={`clickable add-element-tab-button ${val === activeTab ? "tab-button-active" : ""}`}
-              onClick={() => setActiveTab(val)}
+              className={`${!selectedElement ? "clickable" : "disabled"} add-element-tab-button ${val === activeTab ? "tab-button-active" : ""}`}
+              onClick={() => {
+                if (!selectedElement) {
+                  setActiveTab(val);
+                }
+              }}
             >
               {val}
             </div>

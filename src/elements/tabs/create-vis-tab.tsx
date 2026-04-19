@@ -1,6 +1,7 @@
 "use client";
 
 import { CanvasElement } from "@/types/canvas-element.types";
+import { VisualizerConfig } from "@/utils/create-visualizer";
 import { useState } from "react";
 import { ColorPicker } from "../color-picker";
 
@@ -12,18 +13,53 @@ const DEFAULTS = {
   FILL: "#ffffff",
 };
 
+interface VisualizerCreationTabProps {
+  addElement?: (el: Omit<CanvasElement, "id">) => void;
+  updateElement?: (
+    id: string,
+    updates: Partial<Omit<CanvasElement, "id">>,
+  ) => void;
+  initialValues?: {
+    id: string;
+    name: string;
+    config: VisualizerConfig;
+  };
+}
+
 export const VisualizerCreationTab = ({
   addElement,
-}: {
-  addElement: (el: Omit<CanvasElement, "id">) => void;
-}) => {
-  const [name, setName] = useState("");
+  updateElement,
+  initialValues,
+}: VisualizerCreationTabProps) => {
+  const isEditing = !!initialValues;
 
-  const [numBars, setNumBars] = useState(DEFAULTS.BAR_COUNT);
-  const [width, setWidth] = useState(DEFAULTS.WIDTH);
-  const [height, setHeight] = useState(DEFAULTS.HEIGHT);
-  const [gap, setGap] = useState(DEFAULTS.GAP);
-  const [fill, setFill] = useState(DEFAULTS.FILL);
+  const [name, setName] = useState(initialValues?.name ?? "");
+  const [numBars, setNumBars] = useState(
+    initialValues?.config.numBars ?? DEFAULTS.BAR_COUNT,
+  );
+  const [width, setWidth] = useState(
+    initialValues?.config.width ?? DEFAULTS.WIDTH,
+  );
+  const [height, setHeight] = useState(
+    initialValues?.config.height ?? DEFAULTS.HEIGHT,
+  );
+  const [gap, setGap] = useState(initialValues?.config.gap ?? DEFAULTS.GAP);
+  const [fill, setFill] = useState(initialValues?.config.fill ?? DEFAULTS.FILL);
+
+  const handleSubmit = () => {
+    if (isEditing && updateElement && initialValues) {
+      updateElement(initialValues.id, {
+        config: { numBars, width, height, gap, fill },
+        name,
+      });
+    } else if (addElement) {
+      addElement({
+        type: "visualizer",
+        name,
+        config: { numBars, width, height, gap, fill },
+      });
+    }
+  };
 
   return (
     <div className="creation-tab">
@@ -82,18 +118,8 @@ export const VisualizerCreationTab = ({
         </div>
       </div>
       <ColorPicker color={fill} onChange={setFill} />
-
-      <button
-        className="add-button clickable"
-        onClick={() =>
-          addElement({
-            type: "visualizer",
-            name,
-            config: { numBars, width, height, gap, fill },
-          })
-        }
-      >
-        Add
+      <button className="add-button clickable" onClick={handleSubmit}>
+        {isEditing ? "Update" : "Add"}
       </button>
     </div>
   );

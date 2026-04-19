@@ -4,7 +4,7 @@ import "./editor.styles.css";
 import * as PIXI from "pixi.js";
 import { createAudioAnalyser } from "@/utils/audio-analyzer";
 import { handleRecord } from "@/utils/helpers/handle-recording";
-import { createVisualizer } from "@/utils/create-visualizer";
+import { createVisualizer, VisualizerConfig } from "@/utils/create-visualizer";
 import { Sortable } from "@/elements/sortable";
 import { AddElementSection } from "@/elements/add-element-section";
 import { CreateShape } from "@/utils/create-shape";
@@ -31,6 +31,13 @@ export default function Home() {
   const [audioReady, setAudioReady] = useState(false);
   const [recording, setRecording] = useState(false);
   const [canvasElements, setCanvasElements] = useState<CanvasElement[]>([]);
+
+  const [selectedElementId, setSelectedElementId] = useState<string | null>(
+    null,
+  );
+
+  const selectedElement =
+    canvasElements.find((el) => el.id === selectedElementId) ?? null;
 
   const addElement = (element: Omit<CanvasElement, "id">) => {
     const id = crypto.randomUUID();
@@ -66,6 +73,44 @@ export default function Home() {
     ) {
       const instance = createText(appRef.current, element.textConfig);
       appRef.current.stage.addChild(instance.container);
+      visualizerInstancesRef.current.set(id, instance);
+    }
+  };
+
+  const updateElement = (
+    id: string,
+    updates: Partial<Omit<CanvasElement, "id">>,
+  ) => {
+    const app = appRef.current;
+    const analyser = analyserRef.current;
+    if (!app) return;
+
+    const existing = canvasElements.find((el) => el.id === id);
+    if (!existing) return;
+
+    const updated = { ...existing, ...updates };
+
+    setCanvasElements((prev) =>
+      prev.map((el) => (el.id === id ? updated : el)),
+    );
+
+    const existingInstance = visualizerInstancesRef.current.get(id);
+    if (existingInstance) {
+      existingInstance.destroy();
+      visualizerInstancesRef.current.delete(id);
+    }
+
+    if (updated.type === "visualizer" && updated.config && analyser) {
+      const instance = createVisualizer(app, analyser, updated.config);
+      app.stage.addChild(instance.container);
+      visualizerInstancesRef.current.set(id, instance);
+    } else if (updated.type === "shape" && updated.shapeConfig) {
+      const instance = CreateShape(app, updated.shapeConfig);
+      app.stage.addChild(instance.container);
+      visualizerInstancesRef.current.set(id, instance);
+    } else if (updated.type === "text" && updated.textConfig) {
+      const instance = createText(app, updated.textConfig);
+      app.stage.addChild(instance.container);
       visualizerInstancesRef.current.set(id, instance);
     }
   };
@@ -173,6 +218,10 @@ export default function Home() {
                   name={item.name}
                   setCanvasElements={setCanvasElements}
                   visualizerInstancesRef={visualizerInstancesRef}
+                  onEdit={(id) => {
+                    setSelectedElementId(id);
+                    setShowAddElementScreen(true);
+                  }}
                 />
               ))}
             </ul>
@@ -185,9 +234,16 @@ export default function Home() {
       {showAddElementScreen && (
         <div
           className="add-element-section-overlay"
-          onClick={() => setShowAddElementScreen(false)}
+          onClick={() => {
+            setShowAddElementScreen(false);
+            setSelectedElementId(null);
+          }}
         >
-          <AddElementSection addElement={addElement} />
+          <AddElementSection
+            addElement={addElement}
+            updateElement={updateElement}
+            selectedElement={selectedElement}
+          />
         </div>
       )}
     </div>
