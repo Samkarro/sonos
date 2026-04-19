@@ -1,3 +1,4 @@
+import { BloomFilter } from "pixi-filters";
 import * as PIXI from "pixi.js";
 
 export type PixiInstance = {

@@ -2,7 +2,7 @@
 
 import { CanvasElement } from "@/types/canvas-element.types";
 import { VisualizerConfig } from "@/utils/create-visualizer";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { ColorPicker } from "../color-picker";
 
 const DEFAULTS = {
@@ -24,12 +24,14 @@ interface VisualizerCreationTabProps {
     name: string;
     config: VisualizerConfig;
   };
+  setShowFilters: Dispatch<SetStateAction<boolean>>;
 }
 
 export const VisualizerCreationTab = ({
   addElement,
   updateElement,
   initialValues,
+  setShowFilters,
 }: VisualizerCreationTabProps) => {
   const isEditing = !!initialValues;
 

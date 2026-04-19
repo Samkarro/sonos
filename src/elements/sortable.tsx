@@ -11,6 +11,7 @@ interface SortableProps {
   setCanvasElements: Dispatch<SetStateAction<CanvasElement[]>>;
   visualizerInstancesRef: RefObject<Map<string, PixiInstance>>;
   onEdit: (id: string) => void;
+  onEditFilters: (id: string) => void;
 }
 
 export const Sortable = ({
@@ -20,6 +21,7 @@ export const Sortable = ({
   setCanvasElements,
   visualizerInstancesRef,
   onEdit,
+  onEditFilters,
 }: SortableProps) => {
   const { ref, isDragging } = useSortable({ id, index });
 

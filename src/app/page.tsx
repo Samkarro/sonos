@@ -12,7 +12,7 @@ import { DragDropProvider } from "@dnd-kit/react";
 import { handleAudioUpload } from "@/utils/helpers/handle-audio-upload";
 import { handleDragEnd } from "@/utils/helpers/handle-drag-end";
 import { PixiInstance } from "@/types/pixi-instance.types";
-import { CanvasElement } from "@/types/canvas-element.types";
+import { CanvasElement, FilterConfig } from "@/types/canvas-element.types";
 import { createText } from "@/utils/create-text";
 
 const CANVAS_WIDTH = 1920;
@@ -35,6 +35,9 @@ export default function Home() {
   const [selectedElementId, setSelectedElementId] = useState<string | null>(
     null,
   );
+  const [selectedFilterElementId, setSelectedFilterElementId] = useState<
+    string | null
+  >(null);
 
   const selectedElement =
     canvasElements.find((el) => el.id === selectedElementId) ?? null;
@@ -74,6 +77,24 @@ export default function Home() {
       const instance = createText(appRef.current, element.textConfig);
       appRef.current.stage.addChild(instance.container);
       visualizerInstancesRef.current.set(id, instance);
+    }
+  };
+
+  const updateFilters = (id: string, filterConfig: FilterConfig) => {
+    setCanvasElements((prev) =>
+      prev.map((el) => (el.id === id ? { ...el, filters: filterConfig } : el)),
+    );
+
+    const instance = visualizerInstancesRef.current.get(id);
+    if (!instance?.filterRefs) return;
+
+    const { blur, colorMatrix } = instance.filterRefs;
+    if (blur)
+      blur.blur = filterConfig.blur?.enabled ? filterConfig.blur.strength : 0;
+    if (colorMatrix) {
+      colorMatrix.reset();
+      colorMatrix.brightness(filterConfig.colorMatrix?.brightness ?? 1, false);
+      colorMatrix.saturate(filterConfig.colorMatrix?.saturation ?? 0, false);
     }
   };
 
@@ -222,6 +243,7 @@ export default function Home() {
                     setSelectedElementId(id);
                     setShowAddElementScreen(true);
                   }}
+                  onEditFilters={(id) => setSelectedFilterElementId(id)}
                 />
               ))}
             </ul>
@@ -243,6 +265,7 @@ export default function Home() {
             addElement={addElement}
             updateElement={updateElement}
             selectedElement={selectedElement}
+            updateFilters={updateFilters}
           />
         </div>
       )}
