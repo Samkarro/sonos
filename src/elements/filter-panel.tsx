@@ -2,19 +2,19 @@
 import { CanvasElement, FilterConfig } from "@/types/canvas-element.types";
 
 interface FilterPanelProps {
-  element: CanvasElement;
+  element: CanvasElement | null;
   updateFilters: (id: string, filterConfig: FilterConfig) => void;
 }
 
 export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
-  const filters = element.filters ?? {};
+  const filters = element?.filters ?? {};
 
   const update = (partial: Partial<FilterConfig>) => {
-    updateFilters(element.id, { ...filters, ...partial });
+    updateFilters(element?.id, { ...filters, ...partial });
   };
 
   return (
-    <div className="creation-tab">
+    <div className="filter-panel">
       {/* Blur */}
       <div className="filter-section">
         <div className="filter-header">

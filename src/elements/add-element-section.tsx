@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import "./styles/add-element-section.styles.css";
+import "./styles/filter-panel.styles.css";
 import { VisualizerCreationTab } from "./tabs/create-vis-tab";
 import { ShapeCreationTab } from "./tabs/create-shape-tab";
 import { CanvasElement, FilterConfig } from "@/types/canvas-element.types";
@@ -41,7 +42,6 @@ export const AddElementSection = ({
               }
             : undefined
         }
-        setShowFilters={setShowFilters}
       />
     ),
     shape: <ShapeCreationTab addElement={addElement} />,
@@ -69,20 +69,31 @@ export const AddElementSection = ({
             {val}
           </div>
         ))}
-        {selectedElement && (
-          <div
-            className={`clickable add-element-tab-button ${showFilters ? "tab-button-active" : ""}`}
-            onClick={() => setShowFilters((prev) => !prev)}
-          >
-            filters
-          </div>
-        )}
       </div>
       <hr />
       {showFilters && selectedElement ? (
         <FilterPanel element={selectedElement} updateFilters={updateFilters} />
       ) : (
         TAB_COMPONENTS[activeTab]
+      )}
+      <div
+        className={`clickable add-element-tab-button ${showFilters ? "tab-button-active" : ""}`}
+        onClick={() => setShowFilters((prev) => !prev)}
+      >
+        filters
+      </div>
+      {showFilters && (
+        <div
+          className="filter-panel-overlay"
+          onClick={() => setShowFilters(false)}
+        >
+          <div onClick={(e) => e.stopPropagation()}>
+            <FilterPanel
+              element={selectedElement}
+              updateFilters={updateFilters}
+            />
+          </div>
+        </div>
       )}
     </div>
   );

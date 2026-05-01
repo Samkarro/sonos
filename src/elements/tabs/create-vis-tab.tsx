@@ -24,14 +24,12 @@ interface VisualizerCreationTabProps {
     name: string;
     config: VisualizerConfig;
   };
-  setShowFilters: Dispatch<SetStateAction<boolean>>;
 }
 
 export const VisualizerCreationTab = ({
   addElement,
   updateElement,
   initialValues,
-  setShowFilters,
 }: VisualizerCreationTabProps) => {
   const isEditing = !!initialValues;
 
