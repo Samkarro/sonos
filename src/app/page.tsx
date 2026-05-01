@@ -45,40 +45,9 @@ export default function Home() {
 
   const addElement = (element: Omit<CanvasElement, "id">) => {
     const id = crypto.randomUUID();
-    const elementWithId = { ...element, id };
+    const fullElement = { ...element, id };
 
-    setCanvasElements((prev) => [elementWithId, ...prev]);
-
-    if (
-      element.type === "visualizer" &&
-      element.config &&
-      appRef.current &&
-      analyserRef.current
-    ) {
-      const instance = createVisualizer(
-        appRef.current,
-        analyserRef.current,
-        element.config,
-      );
-      appRef.current.stage.addChild(instance.container);
-      visualizerInstancesRef.current.set(id, instance);
-    } else if (
-      element.type === "shape" &&
-      element.shapeConfig &&
-      appRef.current
-    ) {
-      const instance = CreateShape(appRef.current, element.shapeConfig);
-      appRef.current.stage.addChild(instance.container);
-      visualizerInstancesRef.current.set(id, instance);
-    } else if (
-      element.type === "text" &&
-      element.textConfig &&
-      appRef.current
-    ) {
-      const instance = createText(appRef.current, element.textConfig);
-      appRef.current.stage.addChild(instance.container);
-      visualizerInstancesRef.current.set(id, instance);
-    }
+    upsertElement(fullElement, { isNew: true });
   };
 
   const updateFilters = (id: string, filterConfig: FilterConfig) => {
@@ -103,38 +72,12 @@ export default function Home() {
     id: string,
     updates: Partial<Omit<CanvasElement, "id">>,
   ) => {
-    const app = appRef.current;
-    const analyser = analyserRef.current;
-    if (!app) return;
-
     const existing = canvasElements.find((el) => el.id === id);
     if (!existing) return;
 
     const updated = { ...existing, ...updates };
 
-    setCanvasElements((prev) =>
-      prev.map((el) => (el.id === id ? updated : el)),
-    );
-
-    const existingInstance = visualizerInstancesRef.current.get(id);
-    if (existingInstance) {
-      existingInstance.destroy();
-      visualizerInstancesRef.current.delete(id);
-    }
-
-    if (updated.type === "visualizer" && updated.config && analyser) {
-      const instance = createVisualizer(app, analyser, updated.config);
-      app.stage.addChild(instance.container);
-      visualizerInstancesRef.current.set(id, instance);
-    } else if (updated.type === "shape" && updated.shapeConfig) {
-      const instance = CreateShape(app, updated.shapeConfig);
-      app.stage.addChild(instance.container);
-      visualizerInstancesRef.current.set(id, instance);
-    } else if (updated.type === "text" && updated.textConfig) {
-      const instance = createText(app, updated.textConfig);
-      app.stage.addChild(instance.container);
-      visualizerInstancesRef.current.set(id, instance);
-    }
+    upsertElement(updated);
   };
 
   const [showAddElementScreen, setShowAddElementScreen] =
@@ -157,7 +100,7 @@ export default function Home() {
     const analyser = createAudioAnalyser(audioRef.current);
     analyserRef.current = analyser;
 
-    // Create initial visualizer from starting state
+    // Create initial visualizer from starting state TODO: possibly needs removal
     canvasElements.forEach((el) => {
       if (el.type === "visualizer" && el.config) {
         const instance = createVisualizer(app, analyser, el.config);
@@ -179,6 +122,69 @@ export default function Home() {
       app.destroy(true);
     };
   }, []);
+
+  const createInstance = (
+    app: PIXI.Application,
+    analyser: ReturnType<typeof createAudioAnalyser> | null,
+    element: CanvasElement,
+  ): PixiInstance | null => {
+    if (element.type === "visualizer" && element.config && analyser) {
+      return createVisualizer(app, analyser, element.config);
+    }
+
+    if (element.type === "shape" && element.shapeConfig) {
+      return CreateShape(app, element.shapeConfig);
+    }
+
+    if (element.type === "text" && element.textConfig) {
+      return createText(app, element.textConfig);
+    }
+
+    return null;
+  };
+
+  // These two are specifical for visualizers, as they need recreation every time
+  const mountInstance = (id: string, instance: PixiInstance) => {
+    const app = appRef.current;
+    if (!app) return;
+
+    app.stage.addChild(instance.container);
+    visualizerInstancesRef.current.set(id, instance);
+  };
+
+  const destroyInstance = (id: string) => {
+    const existing = visualizerInstancesRef.current.get(id);
+    if (existing) {
+      existing.destroy();
+      visualizerInstancesRef.current.delete(id);
+    }
+  };
+
+  const upsertElement = (
+    element: CanvasElement,
+    options?: { isNew?: boolean },
+  ) => {
+    const app = appRef.current;
+    const analyser = analyserRef.current;
+    if (!app) return;
+
+    const id = element.id;
+
+    destroyInstance(id);
+
+    const instance = createInstance(app, analyser, element);
+    if (instance) {
+      mountInstance(id, instance);
+    }
+
+    setCanvasElements((prev) => {
+      if (options?.isNew) {
+        return [element, ...prev];
+      }
+
+      return prev.map((el) => (el.id === id ? element : el));
+    });
+  };
 
   useEffect(() => {
     const app = appRef.current;
