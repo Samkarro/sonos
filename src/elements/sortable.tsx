@@ -21,7 +21,6 @@ export const Sortable = ({
   setCanvasElements,
   visualizerInstancesRef,
   onEdit,
-  onEditFilters,
 }: SortableProps) => {
   const { ref, isDragging } = useSortable({ id, index });
 

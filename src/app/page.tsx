@@ -14,6 +14,7 @@ import { handleDragEnd } from "@/utils/helpers/handle-drag-end";
 import { PixiInstance } from "@/types/pixi-instance.types";
 import { CanvasElement, FilterConfig } from "@/types/canvas-element.types";
 import { createText } from "@/utils/create-text";
+import { EditElementSection } from "@/elements/edit-element-section";
 
 const CANVAS_WIDTH = 1920;
 const CANVAS_HEIGHT = 1080;
@@ -241,13 +242,24 @@ export default function Home() {
                   visualizerInstancesRef={visualizerInstancesRef}
                   onEdit={(id) => {
                     setSelectedElementId(id);
-                    setShowAddElementScreen(true);
                   }}
                   onEditFilters={(id) => setSelectedFilterElementId(id)}
                 />
               ))}
             </ul>
           </DragDropProvider>
+        </div>
+        <div className="canvas-element-editor-container">
+          {selectedElementId != null ? (
+            <EditElementSection
+              updateElement={updateElement}
+              selectedElement={selectedElement}
+            />
+          ) : (
+            <div>
+              <p>There's nothing to edit ;/</p>
+            </div>
+          )}
         </div>
       </div>
       <div className="canvas-section-container">
