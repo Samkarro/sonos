@@ -56,16 +56,11 @@ export default function Home() {
     );
 
     const instance = visualizerInstancesRef.current.get(id);
-    if (!instance?.filterRefs) return;
+    if (!instance) return;
 
-    const { blur, colorMatrix } = instance.filterRefs;
-    if (blur)
-      blur.blur = filterConfig.blur?.enabled ? filterConfig.blur.strength : 0;
-    if (colorMatrix) {
-      colorMatrix.reset();
-      colorMatrix.brightness(filterConfig.colorMatrix?.brightness ?? 1, false);
-      colorMatrix.saturate(filterConfig.colorMatrix?.saturation ?? 0, false);
-    }
+    instance.update?.({
+      filters: filterConfig,
+    });
   };
 
   const updateElement = (
@@ -77,7 +72,14 @@ export default function Home() {
 
     const updated = { ...existing, ...updates };
 
-    upsertElement(updated);
+    setCanvasElements((prev) =>
+      prev.map((el) => (el.id === id ? updated : el)),
+    );
+
+    const instance = visualizerInstancesRef.current.get(id);
+    if (!instance) return;
+
+    instance.update?.(updates);
   };
 
   const [showAddElementScreen, setShowAddElementScreen] =
@@ -129,7 +131,7 @@ export default function Home() {
     element: CanvasElement,
   ): PixiInstance | null => {
     if (element.type === "visualizer" && element.config && analyser) {
-      return createVisualizer(app, analyser, element.config);
+      return createVisualizer(app, analyser, element);
     }
 
     if (element.type === "shape" && element.shapeConfig) {
@@ -259,6 +261,7 @@ export default function Home() {
           {selectedElementId != null ? (
             <EditElementSection
               updateElement={updateElement}
+              updateFilters={updateFilters}
               selectedElement={selectedElement}
             />
           ) : (

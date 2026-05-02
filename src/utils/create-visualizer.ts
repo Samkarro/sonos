@@ -3,6 +3,7 @@ import { AudioAnalyser } from "./audio-analyzer";
 import { barHeightCalculator } from "./calculate-slope";
 import { PixiInstance } from "@/types/pixi-instance.types";
 import { CanvasElement } from "@/types/canvas-element.types";
+import { BloomFilter } from "pixi-filters";
 
 export type VisualizerConfig = {
   numBars: number;
@@ -16,9 +17,13 @@ export type VisualizerConfig = {
 export const createVisualizer = (
   app: PIXI.Application,
   analyser: AudioAnalyser,
-  config: VisualizerConfig,
+  element: CanvasElement,
 ): PixiInstance => {
-  let currentConfig = { ...config };
+  if (!element.config) {
+    throw new Error("Visualizer requires config");
+  }
+
+  let currentConfig = { ...element.config };
 
   const recalcLayout = () => {
     const { numBars, width, gap } = currentConfig;
@@ -33,6 +38,10 @@ export const createVisualizer = (
   };
 
   const container = new PIXI.Container();
+  const blur = new PIXI.BlurFilter();
+  const colorMatrix = new PIXI.ColorMatrixFilter();
+  const bloom = new BloomFilter();
+  container.filters = [blur, colorMatrix];
   const bars: PIXI.Graphics[] = [];
   const smoothed = new Float32Array(currentConfig.numBars);
   let barWidth = recalcLayout();
@@ -64,22 +73,60 @@ export const createVisualizer = (
     }
   };
 
-  app.ticker.add(tick);
-
-  const update = (updates: Partial<CanvasElement>) => {
-    if (!updates.config) return;
-
-    const next = updates.config;
-
-    if (next.numBars !== undefined && next.numBars !== currentConfig.numBars) {
-      console.warn("numBars change requires full rebuild");
+  const applyFilters = (filters?: CanvasElement["filters"]) => {
+    if (!filters) {
+      blur.blur = 0;
+      colorMatrix.reset();
       return;
     }
 
-    currentConfig = { ...currentConfig, ...next };
+    // Blur
+    if (filters.blur?.enabled) {
+      blur.blur = filters.blur.strength;
+    } else {
+      blur.blur = 0;
+    }
 
-    if (next.width !== undefined || next.gap !== undefined) {
-      barWidth = recalcLayout();
+    // Color Matrix
+    if (filters.colorMatrix?.enabled) {
+      colorMatrix.reset();
+      colorMatrix.brightness(filters.colorMatrix.brightness ?? 1, false);
+      colorMatrix.saturate(filters.colorMatrix.saturation ?? 0, false);
+      colorMatrix.contrast(filters.colorMatrix.contrast ?? 0, false);
+    } else {
+      colorMatrix.reset();
+    }
+
+    if (filters.bloom?.enabled) {
+      bloom.blur = filters.bloom.strength;
+    } else {
+      bloom.blur = 0;
+    }
+  };
+
+  app.ticker.add(tick);
+
+  const update = (updates: Partial<CanvasElement>) => {
+    if (updates.config) {
+      const next = updates.config;
+
+      if (
+        next.numBars !== undefined &&
+        next.numBars !== currentConfig.numBars
+      ) {
+        console.warn("numBars change requires full rebuild");
+        return;
+      }
+
+      currentConfig = { ...currentConfig, ...next };
+
+      if (next.width !== undefined || next.gap !== undefined) {
+        barWidth = recalcLayout();
+      }
+    }
+
+    if (updates.filters) {
+      applyFilters(updates.filters);
     }
   };
 
@@ -88,5 +135,6 @@ export const createVisualizer = (
     container.destroy({ children: true });
   };
 
+  applyFilters(undefined);
   return { container, destroy, update };
 };

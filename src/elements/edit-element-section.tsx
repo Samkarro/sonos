@@ -1,15 +1,18 @@
 "use client";
 
-import { CanvasElement } from "@/types/canvas-element.types";
+import { CanvasElement, FilterConfig } from "@/types/canvas-element.types";
+import { FilterPanel } from "./filter-panel";
 
 export const EditElementSection = ({
   updateElement,
+  updateFilters,
   selectedElement,
 }: {
   updateElement: (
     id: string,
     updates: Partial<Omit<CanvasElement, "id">>,
   ) => void;
+  updateFilters: (id: string, filterConfig: FilterConfig) => void;
   selectedElement: CanvasElement | null;
 }) => {
   if (!selectedElement || selectedElement.type !== "visualizer") {
@@ -101,6 +104,10 @@ export const EditElementSection = ({
           onChange={(e) => updateConfig({ fill: e.target.value })}
         />
       </div>
+      <FilterPanel
+        element={selectedElement}
+        updateFilters={updateFilters}
+      ></FilterPanel>
     </div>
   );
 };
