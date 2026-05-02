@@ -6,14 +6,14 @@ export const EditElementSection = ({
   updateElement,
   selectedElement,
 }: {
-  updateElement?: (
+  updateElement: (
     id: string,
     updates: Partial<Omit<CanvasElement, "id">>,
   ) => void;
   selectedElement: CanvasElement | null;
 }) => {
   if (!selectedElement || selectedElement.type !== "visualizer") {
-    return <div className="edit-element-section">Select a visualizer</div>;
+    return <div className="edit-element-section">Deleted ;p</div>;
   }
 
   const config = selectedElement.config!;
@@ -30,6 +30,18 @@ export const EditElementSection = ({
 
   return (
     <div className="edit-element-section">
+      {/* name */}
+      <div>
+        <label htmlFor="name">Name</label>
+        <input
+          type="text"
+          name="name"
+          value={!selectedElement.name ? "" : selectedElement.name}
+          onChange={(e) =>
+            updateElement(selectedElement.id, { name: e.target.value })
+          }
+        />
+      </div>
       {/* numBars */}
       <div>
         <label>Bars: {config.numBars}</label>
