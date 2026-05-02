@@ -105,7 +105,7 @@ export default function Home() {
     // Create initial visualizer from starting state TODO: possibly needs removal
     canvasElements.forEach((el) => {
       if (el.type === "visualizer" && el.config) {
-        const instance = createVisualizer(app, analyser, el.config);
+        const instance = createVisualizer(app, analyser, el);
         app.stage.addChild(instance.container);
         visualizerInstancesRef.current.set(el.id, instance);
       }

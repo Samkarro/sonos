@@ -3,7 +3,7 @@ import { AudioAnalyser } from "./audio-analyzer";
 import { barHeightCalculator } from "./calculate-slope";
 import { PixiInstance } from "@/types/pixi-instance.types";
 import { CanvasElement } from "@/types/canvas-element.types";
-import { BloomFilter } from "pixi-filters";
+import { AdjustmentFilter, BloomFilter } from "pixi-filters";
 
 export type VisualizerConfig = {
   numBars: number;
@@ -22,7 +22,6 @@ export const createVisualizer = (
   if (!element.config) {
     throw new Error("Visualizer requires config");
   }
-
   let currentConfig = { ...element.config };
 
   const recalcLayout = () => {
@@ -40,8 +39,9 @@ export const createVisualizer = (
   const container = new PIXI.Container();
   const blur = new PIXI.BlurFilter();
   const colorMatrix = new PIXI.ColorMatrixFilter();
+  const adjustments = new AdjustmentFilter();
   const bloom = new BloomFilter();
-  container.filters = [blur, colorMatrix];
+  container.filters = [blur, colorMatrix, adjustments];
   const bars: PIXI.Graphics[] = [];
   const smoothed = new Float32Array(currentConfig.numBars);
   let barWidth = recalcLayout();
@@ -74,6 +74,8 @@ export const createVisualizer = (
   };
 
   const applyFilters = (filters?: CanvasElement["filters"]) => {
+    colorMatrix.reset();
+
     if (!filters) {
       blur.blur = 0;
       colorMatrix.reset();
@@ -90,8 +92,9 @@ export const createVisualizer = (
     // Color Matrix
     if (filters.colorMatrix?.enabled) {
       colorMatrix.reset();
+      console.log(filters.colorMatrix.brightness);
       colorMatrix.brightness(filters.colorMatrix.brightness ?? 1, false);
-      colorMatrix.saturate(filters.colorMatrix.saturation ?? 0, false);
+      adjustments.saturation = filters.colorMatrix.saturation ?? 1;
       colorMatrix.contrast(filters.colorMatrix.contrast ?? 0, false);
     } else {
       colorMatrix.reset();

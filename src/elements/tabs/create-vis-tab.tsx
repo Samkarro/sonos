@@ -2,7 +2,7 @@
 
 import { CanvasElement } from "@/types/canvas-element.types";
 import { VisualizerConfig } from "@/utils/create-visualizer";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { ColorPicker } from "../color-picker";
 
 const DEFAULTS = {

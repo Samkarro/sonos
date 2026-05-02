@@ -7,7 +7,11 @@ interface FilterPanelProps {
 }
 
 export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
-  const filters = element?.filters ?? {};
+  if (!element) {
+    throw new Error("Filter application requires element.");
+  }
+
+  const filters = element.filters ?? {};
 
   const update = (partial: Partial<FilterConfig>) => {
     updateFilters(element?.id, { ...filters, ...partial });
@@ -85,23 +89,6 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
                 })
               }
             />
-            <label>Quality</label>
-            <input
-              type="range"
-              min={1}
-              max={10}
-              step={1}
-              value={filters.bloom?.quality ?? 4}
-              onChange={(e) =>
-                update({
-                  bloom: {
-                    enabled: true,
-                    strength: filters.bloom?.strength ?? 2,
-                    quality: parseInt(e.target.value),
-                  },
-                })
-              }
-            />
           </>
         )}
       </div>
@@ -117,7 +104,7 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
               update({
                 colorMatrix: {
                   brightness: filters.colorMatrix?.brightness ?? 1,
-                  saturation: filters.colorMatrix?.saturation ?? 0,
+                  saturation: filters.colorMatrix?.saturation ?? 1,
                   contrast: filters.colorMatrix?.contrast ?? 0,
                   enabled: e.target.checked,
                 },
@@ -131,15 +118,15 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
             <input
               type="range"
               min={0}
-              max={3}
-              step={0.01}
-              value={filters.colorMatrix?.brightness ?? 1}
+              max={1}
+              step={0.1}
+              value={filters.colorMatrix?.brightness ?? 0}
               onChange={(e) =>
                 update({
                   colorMatrix: {
                     ...(filters.colorMatrix ?? {
                       enabled: true,
-                      saturation: 0,
+                      saturation: 1,
                       contrast: 0,
                     }),
                     brightness: parseFloat(e.target.value),
@@ -150,10 +137,10 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
             <label>Saturation</label>
             <input
               type="range"
-              min={-1}
-              max={1}
+              min={0}
+              max={2}
               step={0.01}
-              value={filters.colorMatrix?.saturation ?? 0}
+              value={filters.colorMatrix?.saturation ?? 1}
               onChange={(e) =>
                 update({
                   colorMatrix: {
