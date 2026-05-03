@@ -31,24 +31,47 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
                 blur: {
                   strength: filters.blur?.strength ?? 0,
                   enabled: e.target.checked,
+                  bindToBass: filters.blur?.bindToBass ?? false,
                 },
               })
             }
           />
         </div>
         {filters.blur?.enabled && (
-          <input
-            type="range"
-            min={0}
-            max={20}
-            step={0.1}
-            value={filters.blur?.strength ?? 0}
-            onChange={(e) =>
-              update({
-                blur: { enabled: true, strength: parseFloat(e.target.value) },
-              })
-            }
-          />
+          <>
+            <input
+              type="range"
+              min={0}
+              max={20}
+              step={0.1}
+              value={filters.blur?.strength ?? 0}
+              onChange={(e) =>
+                update({
+                  blur: {
+                    enabled: true,
+                    strength: parseFloat(e.target.value),
+                    bindToBass: filters.blur?.bindToBass ?? false,
+                  },
+                })
+              }
+            />
+            <label>
+              <input
+                type="checkbox"
+                checked={filters.blur?.bindToBass ?? false}
+                onChange={(e) =>
+                  update({
+                    blur: {
+                      enabled: true,
+                      strength: filters.blur?.strength ?? 0,
+                      bindToBass: e.target.checked,
+                    },
+                  })
+                }
+              />
+              Bind to bass
+            </label>
+          </>
         )}
       </div>
 
@@ -65,6 +88,7 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
                   strength: filters.bloom?.strength ?? 2,
                   quality: filters.bloom?.quality ?? 4,
                   enabled: e.target.checked,
+                  bindToBass: filters.bloom?.bindToBass ?? false,
                 },
               })
             }
@@ -85,10 +109,28 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
                     enabled: true,
                     quality: filters.bloom?.quality ?? 4,
                     strength: parseFloat(e.target.value),
+                    bindToBass: filters.bloom?.bindToBass ?? false,
                   },
                 })
               }
             />
+            <label>
+              <input
+                type="checkbox"
+                checked={filters.bloom?.bindToBass ?? false}
+                onChange={(e) =>
+                  update({
+                    bloom: {
+                      enabled: true,
+                      strength: filters.bloom?.strength ?? 2,
+                      quality: filters.bloom?.quality ?? 4,
+                      bindToBass: e.target.checked,
+                    },
+                  })
+                }
+              />
+              Bind to bass
+            </label>
           </>
         )}
       </div>
@@ -107,6 +149,9 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
                   saturation: filters.colorMatrix?.saturation ?? 1,
                   contrast: filters.colorMatrix?.contrast ?? 0,
                   enabled: e.target.checked,
+                  brightnessBind: filters.colorMatrix?.brightnessBind ?? false,
+                  saturationBind: filters.colorMatrix?.saturationBind ?? false,
+                  contrastBind: filters.colorMatrix?.contrastBind ?? false,
                 },
               })
             }
@@ -120,7 +165,7 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
               min={0}
               max={2}
               step={0.05}
-              value={filters.colorMatrix?.brightness ?? 0}
+              value={filters.colorMatrix?.brightness ?? 1}
               onChange={(e) =>
                 update({
                   colorMatrix: {
@@ -134,6 +179,27 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
                 })
               }
             />
+            <label>
+              <input
+                type="checkbox"
+                checked={filters.colorMatrix?.brightnessBind ?? false}
+                onChange={(e) =>
+                  update({
+                    colorMatrix: {
+                      ...(filters.colorMatrix ?? {
+                        enabled: true,
+                        saturation: 1,
+                        contrast: 0,
+                        brightness: 1,
+                      }),
+                      brightnessBind: e.target.checked,
+                    },
+                  })
+                }
+              />
+              Bind to bass
+            </label>
+
             <label>Saturation</label>
             <input
               type="range"
@@ -154,6 +220,27 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
                 })
               }
             />
+            <label>
+              <input
+                type="checkbox"
+                checked={filters.colorMatrix?.saturationBind ?? false}
+                onChange={(e) =>
+                  update({
+                    colorMatrix: {
+                      ...(filters.colorMatrix ?? {
+                        enabled: true,
+                        brightness: 1,
+                        contrast: 0,
+                        saturation: 1,
+                      }),
+                      saturationBind: e.target.checked,
+                    },
+                  })
+                }
+              />
+              Bind to bass
+            </label>
+
             <label>Contrast</label>
             <input
               type="range"
@@ -167,13 +254,33 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
                     ...(filters.colorMatrix ?? {
                       enabled: true,
                       brightness: 1,
-                      saturation: 0,
+                      saturation: 1,
                     }),
                     contrast: parseFloat(e.target.value),
                   },
                 })
               }
             />
+            <label>
+              <input
+                type="checkbox"
+                checked={filters.colorMatrix?.contrastBind ?? false}
+                onChange={(e) =>
+                  update({
+                    colorMatrix: {
+                      ...(filters.colorMatrix ?? {
+                        enabled: true,
+                        brightness: 1,
+                        saturation: 1,
+                        contrast: 0,
+                      }),
+                      contrastBind: e.target.checked,
+                    },
+                  })
+                }
+              />
+              Bind to bass
+            </label>
           </>
         )}
       </div>

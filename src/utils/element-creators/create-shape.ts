@@ -4,6 +4,8 @@ import { CanvasElement } from "@/types/canvas-element.types";
 import * as PIXI from "pixi.js";
 import { applyFilters } from "../apply-filters";
 import { AdjustmentFilter, BloomFilter } from "pixi-filters";
+import { getBassLevel } from "../bass-ticker";
+import { AudioAnalyser } from "../audio-analyzer";
 
 const drawShape = (
   graphics: PIXI.Graphics,
@@ -24,6 +26,7 @@ const drawShape = (
 export const CreateShape = (
   app: PIXI.Application,
   element: CanvasElement,
+  analyser: AudioAnalyser | null,
 ): PixiInstance => {
   if (!element.shapeConfig) throw new Error("Shape requires shapeConfig");
 
@@ -57,6 +60,29 @@ export const CreateShape = (
     drawShape(graphics, shapeConfig, element.width, element.height, fillColor);
     container.addChild(graphics);
   }
+  let currentFilters = element.filters;
+
+  const bassTick = () => {
+    if (!currentFilters) return;
+    if (!analyser) return;
+    const bass = getBassLevel(analyser);
+
+    if (currentFilters.blur?.enabled && currentFilters.blur.bindToBass) {
+      blur.blur = currentFilters.blur.strength * bass * 10; // scale as needed
+    }
+    if (currentFilters.bloom?.enabled && currentFilters.bloom.bindToBass) {
+      bloom.blur = currentFilters.bloom.strength * bass * 10;
+    }
+    if (
+      currentFilters.colorMatrix?.enabled &&
+      currentFilters.colorMatrix.brightnessBind
+    ) {
+      adjustments.brightness =
+        currentFilters.colorMatrix.brightness * (0.5 + bass);
+    }
+  };
+
+  app.ticker.add(bassTick);
 
   const update = (updates: Partial<CanvasElement>) => {
     if (updates.x !== undefined) container.x = updates.x;
@@ -108,11 +134,14 @@ export const CreateShape = (
       }
     }
 
-    if (updates.filters)
+    if (updates.filters) {
+      currentFilters = updates.filters;
       applyFilters(colorMatrix, adjustments, blur, bloom, updates.filters);
+    }
   };
 
   const destroy = () => {
+    app.ticker.remove(bassTick);
     container.destroy({ children: true });
   };
   applyFilters(colorMatrix, adjustments, blur, bloom, element.filters);

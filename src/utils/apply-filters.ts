@@ -9,34 +9,41 @@ export const applyFilters = (
   bloom: BloomFilter,
   filters?: FilterConfig,
 ) => {
-  colorMatrix.reset();
-
   if (!filters) {
     blur.blur = 0;
+    bloom.blur = 0;
     colorMatrix.reset();
     return;
   }
 
-  // Blur
   if (filters.blur?.enabled) {
-    blur.blur = filters.blur.strength;
+    if (!filters.blur.bindToBass) blur.blur = filters.blur.strength;
   } else {
     blur.blur = 0;
   }
 
-  // Color adjustments
-  if (filters.colorMatrix?.enabled) {
-    colorMatrix.reset();
-    adjustments.brightness = filters.colorMatrix.brightness ?? 1;
-    adjustments.saturation = filters.colorMatrix.saturation ?? 1;
-    colorMatrix.contrast(filters.colorMatrix.contrast ?? 0, false);
-  } else {
-    colorMatrix.reset();
-  }
-
   if (filters.bloom?.enabled) {
-    bloom.blur = filters.bloom.strength;
+    if (!filters.bloom.bindToBass) bloom.blur = filters.bloom.strength;
   } else {
     bloom.blur = 0;
+  }
+
+  if (filters.colorMatrix?.enabled) {
+    // only reset if nothing is bass-bound, otherwise we wipe bassTick's work
+    const anyBound =
+      filters.colorMatrix.brightnessBind ||
+      filters.colorMatrix.saturationBind ||
+      filters.colorMatrix.contrastBind;
+
+    if (!anyBound) colorMatrix.reset();
+
+    if (!filters.colorMatrix.brightnessBind)
+      adjustments.brightness = filters.colorMatrix.brightness ?? 1;
+    if (!filters.colorMatrix.saturationBind)
+      adjustments.saturation = filters.colorMatrix.saturation ?? 1;
+    if (!filters.colorMatrix.contrastBind)
+      colorMatrix.contrast(filters.colorMatrix.contrast ?? 0, false);
+  } else {
+    colorMatrix.reset();
   }
 };

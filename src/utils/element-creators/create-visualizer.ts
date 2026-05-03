@@ -5,6 +5,7 @@ import { PixiInstance } from "@/types/pixi-instance.types";
 import { CanvasElement } from "@/types/canvas-element.types";
 import { AdjustmentFilter, BloomFilter } from "pixi-filters";
 import { applyFilters } from "../apply-filters";
+import { getBassLevel } from "../bass-ticker";
 
 export type VisualizerConfig = {
   numBars: number;
@@ -75,6 +76,37 @@ export const createVisualizer = (
     }
   };
 
+  let currentFilters = element.filters;
+
+  const bassTick = () => {
+    if (!currentFilters || !analyser) return;
+    const bass = getBassLevel(analyser);
+
+    if (currentFilters.blur?.enabled && currentFilters.blur.bindToBass) {
+      blur.blur = barHeightCalculator(
+        currentFilters.blur.strength * bass * 5 * 3,
+        currentHeight,
+      );
+    }
+    if (currentFilters.bloom?.enabled && currentFilters.bloom.bindToBass) {
+      bloom.blur = barHeightCalculator(
+        currentFilters.bloom.strength * bass * 5 * 3,
+        currentHeight,
+      );
+    }
+    if (
+      currentFilters.colorMatrix?.enabled &&
+      currentFilters.colorMatrix.brightnessBind
+    ) {
+      adjustments.brightness = barHeightCalculator(
+        currentFilters.colorMatrix.brightness * (0.0 + bass * 5),
+        currentHeight,
+      );
+    }
+  };
+
+  app.ticker.add(bassTick);
+
   app.ticker.add(tick);
 
   const update = (updates: Partial<CanvasElement>) => {
@@ -108,12 +140,15 @@ export const createVisualizer = (
       if (next.gap !== undefined) barWidth = recalcLayout();
     }
 
-    if (updates.filters)
+    if (updates.filters) {
+      currentFilters = updates.filters;
       applyFilters(colorMatrix, adjustments, blur, bloom, updates.filters);
+    }
   };
 
   const destroy = () => {
     app.ticker.remove(tick);
+    app.ticker.remove(bassTick);
     container.destroy({ children: true });
   };
 
