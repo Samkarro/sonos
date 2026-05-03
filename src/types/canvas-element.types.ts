@@ -18,8 +18,6 @@ export type FilterConfig = {
     saturation: number;
     contrast: number;
     brightnessBind?: boolean;
-    saturationBind?: boolean;
-    contrastBind?: boolean;
   };
 };
 

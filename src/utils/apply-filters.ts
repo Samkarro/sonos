@@ -29,20 +29,12 @@ export const applyFilters = (
   }
 
   if (filters.colorMatrix?.enabled) {
-    // only reset if nothing is bass-bound, otherwise we wipe bassTick's work
-    const anyBound =
-      filters.colorMatrix.brightnessBind ||
-      filters.colorMatrix.saturationBind ||
-      filters.colorMatrix.contrastBind;
+    const anyBound = filters.colorMatrix.brightnessBind;
 
     if (!anyBound) colorMatrix.reset();
 
     if (!filters.colorMatrix.brightnessBind)
       adjustments.brightness = filters.colorMatrix.brightness ?? 1;
-    if (!filters.colorMatrix.saturationBind)
-      adjustments.saturation = filters.colorMatrix.saturation ?? 1;
-    if (!filters.colorMatrix.contrastBind)
-      colorMatrix.contrast(filters.colorMatrix.contrast ?? 0, false);
   } else {
     colorMatrix.reset();
   }

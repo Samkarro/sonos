@@ -5,7 +5,7 @@ import { PixiInstance } from "@/types/pixi-instance.types";
 import { CanvasElement } from "@/types/canvas-element.types";
 import { AdjustmentFilter, BloomFilter } from "pixi-filters";
 import { applyFilters } from "../apply-filters";
-import { getBassLevel } from "../bass-ticker";
+import { getBassLevel } from "../get-bass-level";
 
 export type VisualizerConfig = {
   numBars: number;

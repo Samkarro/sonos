@@ -150,8 +150,6 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
                   contrast: filters.colorMatrix?.contrast ?? 0,
                   enabled: e.target.checked,
                   brightnessBind: filters.colorMatrix?.brightnessBind ?? false,
-                  saturationBind: filters.colorMatrix?.saturationBind ?? false,
-                  contrastBind: filters.colorMatrix?.contrastBind ?? false,
                 },
               })
             }
@@ -220,26 +218,6 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
                 })
               }
             />
-            <label>
-              <input
-                type="checkbox"
-                checked={filters.colorMatrix?.saturationBind ?? false}
-                onChange={(e) =>
-                  update({
-                    colorMatrix: {
-                      ...(filters.colorMatrix ?? {
-                        enabled: true,
-                        brightness: 1,
-                        contrast: 0,
-                        saturation: 1,
-                      }),
-                      saturationBind: e.target.checked,
-                    },
-                  })
-                }
-              />
-              Bind to bass
-            </label>
 
             <label>Contrast</label>
             <input
@@ -261,26 +239,6 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
                 })
               }
             />
-            <label>
-              <input
-                type="checkbox"
-                checked={filters.colorMatrix?.contrastBind ?? false}
-                onChange={(e) =>
-                  update({
-                    colorMatrix: {
-                      ...(filters.colorMatrix ?? {
-                        enabled: true,
-                        brightness: 1,
-                        saturation: 1,
-                        contrast: 0,
-                      }),
-                      contrastBind: e.target.checked,
-                    },
-                  })
-                }
-              />
-              Bind to bass
-            </label>
           </>
         )}
       </div>
