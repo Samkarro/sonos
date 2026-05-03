@@ -123,12 +123,12 @@ export const ShapeCreationTab = ({
           addElement({
             type: "shape",
             name,
+            x,
+            y,
+            width,
+            height,
             shapeConfig: {
               shapeType,
-              x,
-              y,
-              width,
-              height,
               borderRadius,
               fill,
               imageSrc,

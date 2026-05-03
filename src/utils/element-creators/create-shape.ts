@@ -1,62 +1,108 @@
 import { PixiInstance } from "@/types/pixi-instance.types";
 import { ShapeConfig } from "@/types/shape-config.types";
+import { CanvasElement } from "@/types/canvas-element.types";
 import * as PIXI from "pixi.js";
 
 const drawShape = (
   graphics: PIXI.Graphics,
   config: ShapeConfig,
+  width: number,
+  height: number,
   fillColor: number,
 ) => {
   graphics.beginFill(fillColor);
   if (config.shapeType === "rectangle") {
-    graphics.drawRoundedRect(
-      0,
-      0,
-      config.width,
-      config.height,
-      config.borderRadius,
-    );
+    graphics.drawRoundedRect(0, 0, width, height, config.borderRadius);
   } else if (config.shapeType === "ellipse") {
-    graphics.drawEllipse(
-      config.width / 2,
-      config.height / 2,
-      config.width / 2,
-      config.height / 2,
-    );
+    graphics.drawEllipse(width / 2, height / 2, width / 2, height / 2);
   }
   graphics.endFill();
 };
 
 export const CreateShape = (
   app: PIXI.Application,
-  config: ShapeConfig,
+  element: CanvasElement,
 ): PixiInstance => {
-  const container = new PIXI.Container();
-  container.x = config.x;
-  container.y = config.y;
+  if (!element.shapeConfig) throw new Error("Shape requires shapeConfig");
 
-  if (config.imageSrc) {
-    const texture = PIXI.Texture.from(config.imageSrc);
+  const { shapeConfig } = element;
+  const container = new PIXI.Container();
+  container.x = element.x;
+  container.y = element.y;
+
+  if (shapeConfig.imageSrc) {
+    const texture = PIXI.Texture.from(shapeConfig.imageSrc);
     const sprite = new PIXI.Sprite(texture);
-    sprite.width = config.width;
-    sprite.height = config.height;
+    sprite.width = element.width;
+    sprite.height = element.height;
 
     const mask = new PIXI.Graphics();
-    drawShape(mask, config, 0xffffff);
+    drawShape(mask, shapeConfig, element.width, element.height, 0xffffff);
 
     sprite.mask = mask;
     container.addChild(sprite);
     container.addChild(mask);
   } else {
     const graphics = new PIXI.Graphics();
-    const fillColor = parseInt(config.fill.replace("#", ""), 16);
-    drawShape(graphics, config, fillColor);
+    const fillColor = parseInt(shapeConfig.fill.replace("#", ""), 16);
+    drawShape(graphics, shapeConfig, element.width, element.height, fillColor);
     container.addChild(graphics);
   }
+
+  const update = (updates: Partial<CanvasElement>) => {
+    if (updates.x !== undefined) container.x = updates.x;
+    if (updates.y !== undefined) container.y = updates.y;
+
+    const needsRedraw =
+      updates.width !== undefined ||
+      updates.height !== undefined ||
+      updates.shapeConfig !== undefined;
+
+    if (needsRedraw) {
+      // clear and redraw all children
+      container.removeChildren();
+
+      const currentWidth = updates.width ?? element.width;
+      const currentHeight = updates.height ?? element.height;
+      const currentShapeConfig = { ...shapeConfig, ...updates.shapeConfig };
+
+      if (currentShapeConfig.imageSrc) {
+        const texture = PIXI.Texture.from(currentShapeConfig.imageSrc);
+        const sprite = new PIXI.Sprite(texture);
+        sprite.width = currentWidth;
+        sprite.height = currentHeight;
+        const mask = new PIXI.Graphics();
+        drawShape(
+          mask,
+          currentShapeConfig,
+          currentWidth,
+          currentHeight,
+          0xffffff,
+        );
+        sprite.mask = mask;
+        container.addChild(sprite);
+        container.addChild(mask);
+      } else {
+        const graphics = new PIXI.Graphics();
+        const fillColor = parseInt(
+          currentShapeConfig.fill.replace("#", ""),
+          16,
+        );
+        drawShape(
+          graphics,
+          currentShapeConfig,
+          currentWidth,
+          currentHeight,
+          fillColor,
+        );
+        container.addChild(graphics);
+      }
+    }
+  };
 
   const destroy = () => {
     container.destroy({ children: true });
   };
 
-  return { container, destroy };
+  return { container, destroy, update };
 };

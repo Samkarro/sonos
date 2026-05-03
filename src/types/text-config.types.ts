@@ -1,7 +1,5 @@
 export type TextConfig = {
   content: string;
-  x: number;
-  y: number;
   fontFamily: string;
   fontSize: number;
   fill: string;

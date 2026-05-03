@@ -22,6 +22,10 @@ interface VisualizerCreationTabProps {
   initialValues?: {
     id: string;
     name: string;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
     config: VisualizerConfig;
   };
 }
@@ -37,11 +41,9 @@ export const VisualizerCreationTab = ({
   const [numBars, setNumBars] = useState(
     initialValues?.config.numBars ?? DEFAULTS.BAR_COUNT,
   );
-  const [width, setWidth] = useState(
-    initialValues?.config.width ?? DEFAULTS.WIDTH,
-  );
+  const [width, setWidth] = useState(initialValues?.width ?? DEFAULTS.WIDTH);
   const [height, setHeight] = useState(
-    initialValues?.config.height ?? DEFAULTS.HEIGHT,
+    initialValues?.height ?? DEFAULTS.HEIGHT,
   );
   const [gap, setGap] = useState(initialValues?.config.gap ?? DEFAULTS.GAP);
   const [fill, setFill] = useState(initialValues?.config.fill ?? DEFAULTS.FILL);
@@ -49,14 +51,20 @@ export const VisualizerCreationTab = ({
   const handleSubmit = () => {
     if (isEditing && updateElement && initialValues) {
       updateElement(initialValues.id, {
-        config: { numBars, width, height, gap, fill },
+        config: { numBars, gap, fill },
         name,
+        width,
+        height,
       });
     } else if (addElement) {
       addElement({
         type: "visualizer",
         name,
-        config: { numBars, width, height, gap, fill },
+        config: { numBars, gap, fill },
+        width,
+        height,
+        x: 0,
+        y: 0,
       });
     }
   };

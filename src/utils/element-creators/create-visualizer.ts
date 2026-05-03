@@ -6,11 +6,7 @@ import { CanvasElement } from "@/types/canvas-element.types";
 import { AdjustmentFilter, BloomFilter } from "pixi-filters";
 
 export type VisualizerConfig = {
-  x: number;
-  y: number;
   numBars: number;
-  width: number;
-  height: number;
   gap: number;
   fill: string;
 };
@@ -24,28 +20,34 @@ export const createVisualizer = (
   if (!element.config) {
     throw new Error("Visualizer requires config");
   }
+
   let currentConfig = { ...element.config };
+  let currentX = element.x;
+  let currentY = element.y;
+  let currentWidth = element.width ?? 100;
+  let currentHeight = element.height ?? 100;
 
   const recalcLayout = () => {
-    const { numBars, width, gap } = currentConfig;
-    const barWidth = (width - gap * numBars) / numBars;
-
+    const { numBars, gap } = currentConfig;
+    const barWidth = (currentWidth - gap * numBars) / numBars;
     for (let i = 0; i < bars.length; i++) {
-      const bar = bars[i];
-      bar.x = i * (barWidth + gap);
+      bars[i].x = i * (barWidth + gap);
     }
-
     return barWidth;
   };
 
   const container = new PIXI.Container();
-  container.x = currentConfig.x ?? 0;
-  container.y = currentConfig.y ?? 0;
+  container.x = currentX;
+  container.y = currentY;
+
+  // Filter setup
   const blur = new PIXI.BlurFilter();
   const colorMatrix = new PIXI.ColorMatrixFilter();
   const adjustments = new AdjustmentFilter();
   const bloom = new BloomFilter();
   container.filters = [blur, bloom, colorMatrix, adjustments];
+
+  // Visualizer specific stuff
   const bars: PIXI.Graphics[] = [];
   const smoothed = new Float32Array(currentConfig.numBars);
   let barWidth = recalcLayout();
@@ -53,23 +55,19 @@ export const createVisualizer = (
   for (let i = 0; i < currentConfig.numBars; i++) {
     const bar = new PIXI.Graphics();
     bar.x = i * (barWidth + currentConfig.gap);
-    bar.y = currentConfig.height;
+    bar.y = currentHeight;
     bars.push(bar);
     container.addChild(bar);
   }
 
   const tick = () => {
-    const { numBars, height, fill } = currentConfig;
-
+    const { numBars, fill } = currentConfig;
     for (let i = 0; i < numBars; i++) {
       const bandIndex = Math.floor((i / numBars) * analyser.bufferLength);
       const target = analyser.dataArray[bandIndex];
-
       smoothed[i] = smoothed[i] + (target - smoothed[i]) * 0.1;
-
-      const barHeight = barHeightCalculator(smoothed[i], height);
+      const barHeight = barHeightCalculator(smoothed[i], currentHeight);
       const bar = bars[i];
-
       bar.clear();
       bar.beginFill(fill);
       bar.drawRect(0, -barHeight, barWidth - 2, barHeight);
@@ -113,9 +111,25 @@ export const createVisualizer = (
   app.ticker.add(tick);
 
   const update = (updates: Partial<CanvasElement>) => {
+    if (updates.x !== undefined) {
+      currentX = updates.x;
+      container.x = currentX;
+    }
+    if (updates.y !== undefined) {
+      currentY = updates.y;
+      container.y = currentY;
+    }
+    if (updates.width !== undefined) {
+      currentWidth = updates.width;
+      barWidth = recalcLayout();
+    }
+    if (updates.height !== undefined) {
+      currentHeight = updates.height;
+      bars.forEach((bar) => (bar.y = currentHeight));
+    }
+
     if (updates.config) {
       const next = updates.config;
-
       if (
         next.numBars !== undefined &&
         next.numBars !== currentConfig.numBars
@@ -123,23 +137,11 @@ export const createVisualizer = (
         console.warn("numBars change requires full rebuild");
         return;
       }
-
       currentConfig = { ...currentConfig, ...next };
-
-      if (next.width !== undefined || next.gap !== undefined) {
-        barWidth = recalcLayout();
-      }
-
-      if (next.x !== undefined) container.x = next.x;
-      if (next.y !== undefined) container.y = next.y;
-      if (next.height !== undefined) {
-        bars.forEach((bar) => (bar.y = next.height!));
-      }
+      if (next.gap !== undefined) barWidth = recalcLayout();
     }
 
-    if (updates.filters) {
-      applyFilters(updates.filters);
-    }
+    if (updates.filters) applyFilters(updates.filters);
   };
 
   const destroy = () => {

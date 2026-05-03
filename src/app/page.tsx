@@ -142,11 +142,11 @@ export default function Home() {
     }
 
     if (element.type === "shape" && element.shapeConfig) {
-      return CreateShape(app, element.shapeConfig);
+      return CreateShape(app, element);
     }
 
     if (element.type === "text" && element.textConfig) {
-      return createText(app, element.textConfig);
+      return createText(app, element);
     }
 
     return null;

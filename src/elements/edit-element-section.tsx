@@ -2,6 +2,8 @@
 
 import { CanvasElement, FilterConfig } from "@/types/canvas-element.types";
 import { FilterPanel } from "./filter-panel";
+import { EditVisualizer } from "./editing-areas/edit-visualizer";
+import { EditShape } from "./editing-areas/edit-shape";
 
 const TYPES = ["visualizer", "shape", "text"] as const;
 type Type = (typeof TYPES)[number];
@@ -18,12 +20,12 @@ export const EditElementSection = ({
   updateFilters: (id: string, filterConfig: FilterConfig) => void;
   selectedElement: CanvasElement | null;
 }) => {
-  if (!selectedElement || selectedElement.type !== "visualizer") {
+  if (!selectedElement) {
     return <div className="edit-element-section">Deleted ;p</div>;
   }
 
   const config = selectedElement.config!;
-  const id = selectedElement.id;
+  const { id, x, y, width, height } = selectedElement;
 
   const updateConfig = (partial: Partial<typeof config>) => {
     updateElement?.(id, {
@@ -34,24 +36,15 @@ export const EditElementSection = ({
     });
   };
 
-  // const TYPE_COMPONENTS: Record<Type, React.ReactNode> = {
-  //   visualizer: (
-  //     <VisualizerCreationTab
-  //       updateElement={updateElement}
-  //       initialValues={
-  //         selectedElement?.type === "visualizer"
-  //           ? {
-  //               id: selectedElement.id,
-  //               name: selectedElement.name,
-  //               config: selectedElement.config!,
-  //             }
-  //           : undefined
-  //       }
-  //     />
-  //   ),
-  //   shape: <ShapeCreationTab updateElement={updateElement} />,
-  //   text: <TextCreationTab updateElement={updateElement} />,
-  // };
+  const TYPE_COMPONENTS: Record<Type, React.ReactNode> = {
+    visualizer: (
+      <EditVisualizer element={selectedElement} updateElement={updateElement} />
+    ),
+    shape: (
+      <EditShape element={selectedElement} updateElement={updateElement} />
+    ),
+    text: <></>,
+  };
 
   return (
     <div className="edit-element-section">
@@ -75,8 +68,8 @@ export const EditElementSection = ({
           min={0}
           max={1920}
           step={1}
-          value={config.x}
-          onChange={(e) => updateConfig({ x: Number(e.target.value) })}
+          value={x}
+          onChange={(e) => updateElement(id, { x: Number(e.target.value) })}
         />
       </div>
       <div>
@@ -86,69 +79,39 @@ export const EditElementSection = ({
           min={0}
           max={1080}
           step={1}
-          value={config.y}
-          onChange={(e) => updateConfig({ y: Number(e.target.value) })}
-        />
-      </div>
-      {/* numBars */}
-      <div>
-        <label>Bars: {config.numBars}</label>
-        <input
-          type="range"
-          min={3}
-          max={100}
-          step={1}
-          value={config.numBars}
-          onChange={(e) => updateConfig({ numBars: Number(e.target.value) })}
+          value={y}
+          onChange={(e) => updateElement(id, { y: Number(e.target.value) })}
         />
       </div>
       {/* width */}
       <div>
-        <label>Width: {config.width}</label>
+        <label>Width: {width}</label>
         <input
           type="range"
           min={1}
           max={1920}
           step={10}
-          value={config.width}
-          onChange={(e) => updateConfig({ width: Number(e.target.value) })}
+          value={width}
+          onChange={(e) => updateElement(id, { width: Number(e.target.value) })}
         />
       </div>
       {/* height */}
       <div>
-        <label>Height: {config.height}</label>
+        <label>Height: {height}</label>
         <input
           type="range"
           min={1}
           max={1080}
           step={10}
-          value={config.height}
-          onChange={(e) => updateConfig({ height: Number(e.target.value) })}
+          value={height}
+          onChange={(e) =>
+            updateElement(id, { height: Number(e.target.value) })
+          }
         />
       </div>
-
-      {/* gap */}
-      <div>
-        <label>Gap: {config.gap}</label>
-        <input
-          type="range"
-          min={0}
-          max={20}
-          step={1}
-          value={config.gap}
-          onChange={(e) => updateConfig({ gap: Number(e.target.value) })}
-        />
-      </div>
-
-      {/* fill */}
-      <div>
-        <label>Color</label>
-        <input
-          type="color"
-          value={config.fill}
-          onChange={(e) => updateConfig({ fill: e.target.value })}
-        />
-      </div>
+      {/* EXTRAS */}
+      {TYPE_COMPONENTS[selectedElement.type]}
+      {/* Filters */}
       <FilterPanel
         element={selectedElement}
         updateFilters={updateFilters}

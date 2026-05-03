@@ -142,10 +142,12 @@ export const TextCreationTab = ({
           addElement({
             type: "text",
             name,
+            x,
+            y,
+            width: 1920,
+            height: 1080,
             textConfig: {
               content,
-              x,
-              y,
               fontFamily,
               fontSize,
               fill,

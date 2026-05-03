@@ -39,6 +39,10 @@ export const AddElementSection = ({
                 id: selectedElement.id,
                 name: selectedElement.name,
                 config: selectedElement.config!,
+                x: 0,
+                y: 0,
+                height: 1080,
+                width: 1920,
               }
             : undefined
         }
