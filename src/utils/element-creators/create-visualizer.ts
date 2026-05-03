@@ -4,6 +4,7 @@ import { barHeightCalculator } from "../calculate-slope";
 import { PixiInstance } from "@/types/pixi-instance.types";
 import { CanvasElement } from "@/types/canvas-element.types";
 import { AdjustmentFilter, BloomFilter } from "pixi-filters";
+import { applyFilters } from "../apply-filters";
 
 export type VisualizerConfig = {
   numBars: number;
@@ -11,7 +12,6 @@ export type VisualizerConfig = {
   fill: string;
 };
 
-// TODO: add guides: do not update smoothed and numbars, prompt user to remake if so.
 export const createVisualizer = (
   app: PIXI.Application,
   analyser: AudioAnalyser,
@@ -75,39 +75,6 @@ export const createVisualizer = (
     }
   };
 
-  const applyFilters = (filters?: CanvasElement["filters"]) => {
-    colorMatrix.reset();
-
-    if (!filters) {
-      blur.blur = 0;
-      colorMatrix.reset();
-      return;
-    }
-
-    // Blur
-    if (filters.blur?.enabled) {
-      blur.blur = filters.blur.strength;
-    } else {
-      blur.blur = 0;
-    }
-
-    // Color adjustments
-    if (filters.colorMatrix?.enabled) {
-      colorMatrix.reset();
-      adjustments.brightness = filters.colorMatrix.brightness ?? 1;
-      adjustments.saturation = filters.colorMatrix.saturation ?? 1;
-      colorMatrix.contrast(filters.colorMatrix.contrast ?? 0, false);
-    } else {
-      colorMatrix.reset();
-    }
-
-    if (filters.bloom?.enabled) {
-      bloom.blur = filters.bloom.strength;
-    } else {
-      bloom.blur = 0;
-    }
-  };
-
   app.ticker.add(tick);
 
   const update = (updates: Partial<CanvasElement>) => {
@@ -141,7 +108,8 @@ export const createVisualizer = (
       if (next.gap !== undefined) barWidth = recalcLayout();
     }
 
-    if (updates.filters) applyFilters(updates.filters);
+    if (updates.filters)
+      applyFilters(colorMatrix, adjustments, blur, bloom, updates.filters);
   };
 
   const destroy = () => {
@@ -149,6 +117,6 @@ export const createVisualizer = (
     container.destroy({ children: true });
   };
 
-  applyFilters(undefined);
+  applyFilters(colorMatrix, adjustments, blur, bloom, element.filters);
   return { container, destroy, update };
 };

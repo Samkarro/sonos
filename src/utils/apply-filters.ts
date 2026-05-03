@@ -1,33 +1,42 @@
 import * as PIXI from "pixi.js";
 import { FilterConfig } from "@/types/canvas-element.types";
-import { BloomFilter } from "pixi-filters";
+import { AdjustmentFilter, BloomFilter } from "pixi-filters";
 
 export const applyFilters = (
-  container: PIXI.Container,
-  config?: FilterConfig,
+  colorMatrix: PIXI.ColorMatrixFilter,
+  adjustments: AdjustmentFilter,
+  blur: PIXI.BlurFilter,
+  bloom: BloomFilter,
+  filters?: FilterConfig,
 ) => {
-  const blur = new PIXI.BlurFilter();
-  const colorMatrix = new PIXI.ColorMatrixFilter();
-  const bloom = new BloomFilter();
-
-  blur.blur = config?.blur?.enabled ? config.blur.strength : 0;
-
   colorMatrix.reset();
 
-  if (config?.colorMatrix?.enabled) {
-    const c = config.colorMatrix;
-
-    colorMatrix.brightness(c.brightness ?? 1, false);
-    colorMatrix.saturate(c.saturation ?? 0, false);
-    colorMatrix.contrast(c.contrast ?? 0, false);
+  if (!filters) {
+    blur.blur = 0;
+    colorMatrix.reset();
+    return;
   }
 
-  if (config?.bloom?.enabled) {
-    bloom.blur = config.bloom.strength;
+  // Blur
+  if (filters.blur?.enabled) {
+    blur.blur = filters.blur.strength;
+  } else {
+    blur.blur = 0;
+  }
+
+  // Color adjustments
+  if (filters.colorMatrix?.enabled) {
+    colorMatrix.reset();
+    adjustments.brightness = filters.colorMatrix.brightness ?? 1;
+    adjustments.saturation = filters.colorMatrix.saturation ?? 1;
+    colorMatrix.contrast(filters.colorMatrix.contrast ?? 0, false);
+  } else {
+    colorMatrix.reset();
+  }
+
+  if (filters.bloom?.enabled) {
+    bloom.blur = filters.bloom.strength;
   } else {
     bloom.blur = 0;
   }
-
-  const active = [blur, colorMatrix];
-  container.filters = active;
 };

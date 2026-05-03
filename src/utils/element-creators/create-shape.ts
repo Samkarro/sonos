@@ -2,6 +2,8 @@ import { PixiInstance } from "@/types/pixi-instance.types";
 import { ShapeConfig } from "@/types/shape-config.types";
 import { CanvasElement } from "@/types/canvas-element.types";
 import * as PIXI from "pixi.js";
+import { applyFilters } from "../apply-filters";
+import { AdjustmentFilter, BloomFilter } from "pixi-filters";
 
 const drawShape = (
   graphics: PIXI.Graphics,
@@ -29,6 +31,13 @@ export const CreateShape = (
   const container = new PIXI.Container();
   container.x = element.x;
   container.y = element.y;
+
+  // Filter setup
+  const blur = new PIXI.BlurFilter();
+  const colorMatrix = new PIXI.ColorMatrixFilter();
+  const adjustments = new AdjustmentFilter();
+  const bloom = new BloomFilter();
+  container.filters = [blur, bloom, colorMatrix, adjustments];
 
   if (shapeConfig.imageSrc) {
     const texture = PIXI.Texture.from(shapeConfig.imageSrc);
@@ -98,11 +107,14 @@ export const CreateShape = (
         container.addChild(graphics);
       }
     }
+
+    if (updates.filters)
+      applyFilters(colorMatrix, adjustments, blur, bloom, updates.filters);
   };
 
   const destroy = () => {
     container.destroy({ children: true });
   };
-
+  applyFilters(colorMatrix, adjustments, blur, bloom, element.filters);
   return { container, destroy, update };
 };
