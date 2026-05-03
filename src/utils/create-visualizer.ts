@@ -41,7 +41,7 @@ export const createVisualizer = (
   const colorMatrix = new PIXI.ColorMatrixFilter();
   const adjustments = new AdjustmentFilter();
   const bloom = new BloomFilter();
-  container.filters = [blur, colorMatrix, adjustments];
+  container.filters = [blur, bloom, colorMatrix, adjustments];
   const bars: PIXI.Graphics[] = [];
   const smoothed = new Float32Array(currentConfig.numBars);
   let barWidth = recalcLayout();
@@ -89,11 +89,10 @@ export const createVisualizer = (
       blur.blur = 0;
     }
 
-    // Color Matrix
+    // Color adjustments
     if (filters.colorMatrix?.enabled) {
       colorMatrix.reset();
-      console.log(filters.colorMatrix.brightness);
-      colorMatrix.brightness(filters.colorMatrix.brightness ?? 1, false);
+      adjustments.brightness = filters.colorMatrix.brightness ?? 1;
       adjustments.saturation = filters.colorMatrix.saturation ?? 1;
       colorMatrix.contrast(filters.colorMatrix.contrast ?? 0, false);
     } else {

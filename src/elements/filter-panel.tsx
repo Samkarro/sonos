@@ -118,8 +118,8 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
             <input
               type="range"
               min={0}
-              max={1}
-              step={0.1}
+              max={2}
+              step={0.05}
               value={filters.colorMatrix?.brightness ?? 0}
               onChange={(e) =>
                 update({
@@ -139,7 +139,7 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
               type="range"
               min={0}
               max={2}
-              step={0.01}
+              step={0.05}
               value={filters.colorMatrix?.saturation ?? 1}
               onChange={(e) =>
                 update({
@@ -159,7 +159,7 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
               type="range"
               min={-1}
               max={1}
-              step={0.01}
+              step={0.05}
               value={filters.colorMatrix?.contrast ?? 0}
               onChange={(e) =>
                 update({
