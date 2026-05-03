@@ -4,6 +4,8 @@ import { barHeightCalculator } from "../calculate-slope";
 import { PixiInstance } from "@/types/pixi-instance.types";
 import { CanvasElement } from "@/types/canvas-element.types";
 import { AdjustmentFilter, BloomFilter } from "pixi-filters";
+import { applyFilters } from "../apply-filters";
+import { getBassLevel } from "../get-bass-level";
 
 export type VisualizerConfig = {
   numBars: number;
@@ -11,7 +13,6 @@ export type VisualizerConfig = {
   fill: string;
 };
 
-// TODO: add guides: do not update smoothed and numbars, prompt user to remake if so.
 export const createVisualizer = (
   app: PIXI.Application,
   analyser: AudioAnalyser,
@@ -75,38 +76,36 @@ export const createVisualizer = (
     }
   };
 
-  const applyFilters = (filters?: CanvasElement["filters"]) => {
-    colorMatrix.reset();
+  let currentFilters = element.filters;
 
-    if (!filters) {
-      blur.blur = 0;
-      colorMatrix.reset();
-      return;
+  const bassTick = () => {
+    if (!currentFilters || !analyser) return;
+    const bass = getBassLevel(analyser);
+
+    if (currentFilters.blur?.enabled && currentFilters.blur.bindToBass) {
+      blur.blur = barHeightCalculator(
+        currentFilters.blur.strength * bass * 5 * 3,
+        currentHeight,
+      );
     }
-
-    // Blur
-    if (filters.blur?.enabled) {
-      blur.blur = filters.blur.strength;
-    } else {
-      blur.blur = 0;
+    if (currentFilters.bloom?.enabled && currentFilters.bloom.bindToBass) {
+      bloom.blur = barHeightCalculator(
+        currentFilters.bloom.strength * bass * 5 * 3,
+        currentHeight,
+      );
     }
-
-    // Color adjustments
-    if (filters.colorMatrix?.enabled) {
-      colorMatrix.reset();
-      adjustments.brightness = filters.colorMatrix.brightness ?? 1;
-      adjustments.saturation = filters.colorMatrix.saturation ?? 1;
-      colorMatrix.contrast(filters.colorMatrix.contrast ?? 0, false);
-    } else {
-      colorMatrix.reset();
-    }
-
-    if (filters.bloom?.enabled) {
-      bloom.blur = filters.bloom.strength;
-    } else {
-      bloom.blur = 0;
+    if (
+      currentFilters.colorMatrix?.enabled &&
+      currentFilters.colorMatrix.brightnessBind
+    ) {
+      adjustments.brightness = barHeightCalculator(
+        currentFilters.colorMatrix.brightness * (0.0 + bass * 5),
+        currentHeight,
+      );
     }
   };
+
+  app.ticker.add(bassTick);
 
   app.ticker.add(tick);
 
@@ -141,14 +140,18 @@ export const createVisualizer = (
       if (next.gap !== undefined) barWidth = recalcLayout();
     }
 
-    if (updates.filters) applyFilters(updates.filters);
+    if (updates.filters) {
+      currentFilters = updates.filters;
+      applyFilters(colorMatrix, adjustments, blur, bloom, updates.filters);
+    }
   };
 
   const destroy = () => {
     app.ticker.remove(tick);
+    app.ticker.remove(bassTick);
     container.destroy({ children: true });
   };
 
-  applyFilters(undefined);
+  applyFilters(colorMatrix, adjustments, blur, bloom, element.filters);
   return { container, destroy, update };
 };

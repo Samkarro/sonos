@@ -1,6 +1,8 @@
 import * as PIXI from "pixi.js";
 import { PixiInstance } from "@/types/pixi-instance.types";
 import { CanvasElement } from "@/types/canvas-element.types";
+import { AdjustmentFilter, BloomFilter } from "pixi-filters";
+import { applyFilters } from "../apply-filters";
 
 export const createText = (
   app: PIXI.Application,
@@ -12,6 +14,13 @@ export const createText = (
   const container = new PIXI.Container();
   container.x = element.x;
   container.y = element.y;
+
+  // Filter setup
+  const blur = new PIXI.BlurFilter();
+  const colorMatrix = new PIXI.ColorMatrixFilter();
+  const adjustments = new AdjustmentFilter();
+  const bloom = new BloomFilter();
+  container.filters = [blur, bloom, colorMatrix, adjustments];
 
   const style = new PIXI.TextStyle({
     fontFamily: textConfig.fontFamily,
@@ -37,11 +46,15 @@ export const createText = (
       if (t.fontWeight !== undefined) text.style.fontWeight = t.fontWeight;
       if (t.align !== undefined) text.style.align = t.align;
     }
+
+    if (updates.filters)
+      applyFilters(colorMatrix, adjustments, blur, bloom, updates.filters);
   };
 
   const destroy = () => {
     container.destroy({ children: true });
   };
+  applyFilters(colorMatrix, adjustments, blur, bloom, element.filters);
 
   return { container, destroy, update };
 };

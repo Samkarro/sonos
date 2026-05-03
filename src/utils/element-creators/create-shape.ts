@@ -2,6 +2,11 @@ import { PixiInstance } from "@/types/pixi-instance.types";
 import { ShapeConfig } from "@/types/shape-config.types";
 import { CanvasElement } from "@/types/canvas-element.types";
 import * as PIXI from "pixi.js";
+import { applyFilters } from "../apply-filters";
+import { AdjustmentFilter, BloomFilter } from "pixi-filters";
+import { getBassLevel } from "../get-bass-level";
+import { AudioAnalyser } from "../audio-analyzer";
+import { barHeightCalculator } from "../calculate-slope";
 
 const drawShape = (
   graphics: PIXI.Graphics,
@@ -22,6 +27,7 @@ const drawShape = (
 export const CreateShape = (
   app: PIXI.Application,
   element: CanvasElement,
+  analyser: AudioAnalyser | null,
 ): PixiInstance => {
   if (!element.shapeConfig) throw new Error("Shape requires shapeConfig");
 
@@ -29,6 +35,13 @@ export const CreateShape = (
   const container = new PIXI.Container();
   container.x = element.x;
   container.y = element.y;
+
+  // Filter setup
+  const blur = new PIXI.BlurFilter();
+  const colorMatrix = new PIXI.ColorMatrixFilter();
+  const adjustments = new AdjustmentFilter();
+  const bloom = new BloomFilter();
+  container.filters = [blur, bloom, colorMatrix, adjustments];
 
   if (shapeConfig.imageSrc) {
     const texture = PIXI.Texture.from(shapeConfig.imageSrc);
@@ -48,6 +61,37 @@ export const CreateShape = (
     drawShape(graphics, shapeConfig, element.width, element.height, fillColor);
     container.addChild(graphics);
   }
+  let currentFilters = element.filters;
+  let currentHeight = element.height;
+
+  const bassTick = () => {
+    if (!currentFilters || !analyser) return;
+    const bass = getBassLevel(analyser);
+
+    if (currentFilters.blur?.enabled && currentFilters.blur.bindToBass) {
+      blur.blur = barHeightCalculator(
+        currentFilters.blur.strength * bass * 5 * 3,
+        currentHeight,
+      );
+    }
+    if (currentFilters.bloom?.enabled && currentFilters.bloom.bindToBass) {
+      bloom.blur = barHeightCalculator(
+        currentFilters.bloom.strength * bass * 5 * 3,
+        currentHeight,
+      );
+    }
+    if (
+      currentFilters.colorMatrix?.enabled &&
+      currentFilters.colorMatrix.brightnessBind
+    ) {
+      adjustments.brightness = barHeightCalculator(
+        currentFilters.colorMatrix.brightness * (0.0 + bass * 5),
+        currentHeight,
+      );
+    }
+  };
+
+  app.ticker.add(bassTick);
 
   const update = (updates: Partial<CanvasElement>) => {
     if (updates.x !== undefined) container.x = updates.x;
@@ -98,11 +142,17 @@ export const CreateShape = (
         container.addChild(graphics);
       }
     }
+
+    if (updates.filters) {
+      currentFilters = updates.filters;
+      applyFilters(colorMatrix, adjustments, blur, bloom, updates.filters);
+    }
   };
 
   const destroy = () => {
+    app.ticker.remove(bassTick);
     container.destroy({ children: true });
   };
-
+  applyFilters(colorMatrix, adjustments, blur, bloom, element.filters);
   return { container, destroy, update };
 };

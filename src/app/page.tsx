@@ -57,7 +57,7 @@ export default function Home() {
 
     const instance = visualizerInstancesRef.current.get(id);
     if (!instance) return;
-
+    console.log("updateFilters", id, instance, filterConfig); // ← add this
     instance.update?.({
       filters: filterConfig,
     });
@@ -142,7 +142,7 @@ export default function Home() {
     }
 
     if (element.type === "shape" && element.shapeConfig) {
-      return CreateShape(app, element);
+      return CreateShape(app, element, analyser);
     }
 
     if (element.type === "text" && element.textConfig) {
