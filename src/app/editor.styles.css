@@ -6,26 +6,23 @@
 }
 
 .controls-section-container {
-  width: 300px;
+  width: 480px;
+  padding: 20px;
 }
 
 .canvas-section-container {
-  height: min-content;
-  min-height: 200px;
-  max-height: 500px;
-  width: 300px;
-  aspect-ratio: 16 / 9;
-
-  resize: horizontal;
-
   display: flex;
   align-items: center;
-  justify-content: center;
+
   overflow: auto;
+  justify-content: flex-end;
+  align-items: start;
+  width: 100%;
+  padding: 20px;
 }
 
 .canvas-container {
-  width: 100%;
+  height: 40rem;
   aspect-ratio: 16 / 9;
 }
 

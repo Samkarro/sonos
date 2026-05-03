@@ -4,7 +4,7 @@ import "./editor.styles.css";
 import * as PIXI from "pixi.js";
 import { createAudioAnalyser } from "@/utils/audio-analyzer";
 import { handleRecord } from "@/utils/helpers/handle-recording";
-import { createVisualizer } from "@/utils/create-visualizer";
+import { createVisualizer, VisualizerConfig } from "@/utils/create-visualizer";
 import { Sortable } from "@/elements/sortable";
 import { AddElementSection } from "@/elements/add-element-section";
 import { CreateShape } from "@/utils/create-shape";
@@ -12,8 +12,9 @@ import { DragDropProvider } from "@dnd-kit/react";
 import { handleAudioUpload } from "@/utils/helpers/handle-audio-upload";
 import { handleDragEnd } from "@/utils/helpers/handle-drag-end";
 import { PixiInstance } from "@/types/pixi-instance.types";
-import { CanvasElement } from "@/types/canvas-element.types";
+import { CanvasElement, FilterConfig } from "@/types/canvas-element.types";
 import { createText } from "@/utils/create-text";
+import { EditElementSection } from "@/elements/edit-element-section";
 
 const CANVAS_WIDTH = 1920;
 const CANVAS_HEIGHT = 1080;
@@ -32,42 +33,53 @@ export default function Home() {
   const [recording, setRecording] = useState(false);
   const [canvasElements, setCanvasElements] = useState<CanvasElement[]>([]);
 
+  const [selectedElementId, setSelectedElementId] = useState<string | null>(
+    null,
+  );
+  const [selectedFilterElementId, setSelectedFilterElementId] = useState<
+    string | null
+  >(null);
+
+  const selectedElement =
+    canvasElements.find((el) => el.id === selectedElementId) ?? null;
+
   const addElement = (element: Omit<CanvasElement, "id">) => {
     const id = crypto.randomUUID();
-    const elementWithId = { ...element, id };
+    const fullElement = { ...element, id };
 
-    setCanvasElements((prev) => [elementWithId, ...prev]);
+    upsertElement(fullElement, { isNew: true });
+  };
 
-    if (
-      element.type === "visualizer" &&
-      element.config &&
-      appRef.current &&
-      analyserRef.current
-    ) {
-      const instance = createVisualizer(
-        appRef.current,
-        analyserRef.current,
-        element.config,
-      );
-      appRef.current.stage.addChild(instance.container);
-      visualizerInstancesRef.current.set(id, instance);
-    } else if (
-      element.type === "shape" &&
-      element.shapeConfig &&
-      appRef.current
-    ) {
-      const instance = CreateShape(appRef.current, element.shapeConfig);
-      appRef.current.stage.addChild(instance.container);
-      visualizerInstancesRef.current.set(id, instance);
-    } else if (
-      element.type === "text" &&
-      element.textConfig &&
-      appRef.current
-    ) {
-      const instance = createText(appRef.current, element.textConfig);
-      appRef.current.stage.addChild(instance.container);
-      visualizerInstancesRef.current.set(id, instance);
-    }
+  const updateFilters = (id: string, filterConfig: FilterConfig) => {
+    setCanvasElements((prev) =>
+      prev.map((el) => (el.id === id ? { ...el, filters: filterConfig } : el)),
+    );
+
+    const instance = visualizerInstancesRef.current.get(id);
+    if (!instance) return;
+
+    instance.update?.({
+      filters: filterConfig,
+    });
+  };
+
+  const updateElement = (
+    id: string,
+    updates: Partial<Omit<CanvasElement, "id">>,
+  ) => {
+    const existing = canvasElements.find((el) => el.id === id);
+    if (!existing) return;
+
+    const updated = { ...existing, ...updates };
+
+    setCanvasElements((prev) =>
+      prev.map((el) => (el.id === id ? updated : el)),
+    );
+
+    const instance = visualizerInstancesRef.current.get(id);
+    if (!instance) return;
+
+    instance.update?.(updates);
   };
 
   const [showAddElementScreen, setShowAddElementScreen] =
@@ -90,10 +102,10 @@ export default function Home() {
     const analyser = createAudioAnalyser(audioRef.current);
     analyserRef.current = analyser;
 
-    // Create initial visualizer from starting state
+    // Create initial visualizer from starting state TODO: possibly needs removal
     canvasElements.forEach((el) => {
       if (el.type === "visualizer" && el.config) {
-        const instance = createVisualizer(app, analyser, el.config);
+        const instance = createVisualizer(app, analyser, el);
         app.stage.addChild(instance.container);
         visualizerInstancesRef.current.set(el.id, instance);
       }
@@ -112,6 +124,69 @@ export default function Home() {
       app.destroy(true);
     };
   }, []);
+
+  const createInstance = (
+    app: PIXI.Application,
+    analyser: ReturnType<typeof createAudioAnalyser> | null,
+    element: CanvasElement,
+  ): PixiInstance | null => {
+    if (element.type === "visualizer" && element.config && analyser) {
+      return createVisualizer(app, analyser, element);
+    }
+
+    if (element.type === "shape" && element.shapeConfig) {
+      return CreateShape(app, element.shapeConfig);
+    }
+
+    if (element.type === "text" && element.textConfig) {
+      return createText(app, element.textConfig);
+    }
+
+    return null;
+  };
+
+  // These two are specifical for visualizers, as they need recreation every time
+  const mountInstance = (id: string, instance: PixiInstance) => {
+    const app = appRef.current;
+    if (!app) return;
+
+    app.stage.addChild(instance.container);
+    visualizerInstancesRef.current.set(id, instance);
+  };
+
+  const destroyInstance = (id: string) => {
+    const existing = visualizerInstancesRef.current.get(id);
+    if (existing) {
+      existing.destroy();
+      visualizerInstancesRef.current.delete(id);
+    }
+  };
+
+  const upsertElement = (
+    element: CanvasElement,
+    options?: { isNew?: boolean },
+  ) => {
+    const app = appRef.current;
+    const analyser = analyserRef.current;
+    if (!app) return;
+
+    const id = element.id;
+
+    destroyInstance(id);
+
+    const instance = createInstance(app, analyser, element);
+    if (instance) {
+      mountInstance(id, instance);
+    }
+
+    setCanvasElements((prev) => {
+      if (options?.isNew) {
+        return [element, ...prev];
+      }
+
+      return prev.map((el) => (el.id === id ? element : el));
+    });
+  };
 
   useEffect(() => {
     const app = appRef.current;
@@ -173,10 +248,27 @@ export default function Home() {
                   name={item.name}
                   setCanvasElements={setCanvasElements}
                   visualizerInstancesRef={visualizerInstancesRef}
+                  onEdit={(id) => {
+                    setSelectedElementId(id);
+                  }}
+                  onEditFilters={(id) => setSelectedFilterElementId(id)}
                 />
               ))}
             </ul>
           </DragDropProvider>
+        </div>
+        <div className="canvas-element-editor-container">
+          {selectedElementId != null ? (
+            <EditElementSection
+              updateElement={updateElement}
+              updateFilters={updateFilters}
+              selectedElement={selectedElement}
+            />
+          ) : (
+            <div>
+              <p>There's nothing to edit ;/</p>
+            </div>
+          )}
         </div>
       </div>
       <div className="canvas-section-container">
@@ -185,9 +277,17 @@ export default function Home() {
       {showAddElementScreen && (
         <div
           className="add-element-section-overlay"
-          onClick={() => setShowAddElementScreen(false)}
+          onClick={() => {
+            setShowAddElementScreen(false);
+            setSelectedElementId(null);
+          }}
         >
-          <AddElementSection addElement={addElement} />
+          <AddElementSection
+            addElement={addElement}
+            updateElement={updateElement}
+            selectedElement={selectedElement}
+            updateFilters={updateFilters}
+          />
         </div>
       )}
     </div>

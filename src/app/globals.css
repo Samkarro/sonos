@@ -46,6 +46,10 @@ a {
   cursor: pointer;
 }
 
+.disabled:hover {
+  cursor: not-allowed;
+}
+
 hr {
   border: none;
   border-bottom: 1px solid rgb(66, 66, 66);
