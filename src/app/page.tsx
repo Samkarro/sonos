@@ -4,16 +4,16 @@ import "./editor.styles.css";
 import * as PIXI from "pixi.js";
 import { createAudioAnalyser } from "@/utils/audio-analyzer";
 import { handleRecord } from "@/utils/helpers/handle-recording";
-import { createVisualizer, VisualizerConfig } from "@/utils/create-visualizer";
+import { createVisualizer } from "@/utils/element-creators/create-visualizer";
 import { Sortable } from "@/elements/sortable";
 import { AddElementSection } from "@/elements/add-element-section";
-import { CreateShape } from "@/utils/create-shape";
+import { CreateShape } from "@/utils/element-creators/create-shape";
 import { DragDropProvider } from "@dnd-kit/react";
 import { handleAudioUpload } from "@/utils/helpers/handle-audio-upload";
 import { handleDragEnd } from "@/utils/helpers/handle-drag-end";
 import { PixiInstance } from "@/types/pixi-instance.types";
 import { CanvasElement, FilterConfig } from "@/types/canvas-element.types";
-import { createText } from "@/utils/create-text";
+import { createText } from "@/utils/element-creators/create-text";
 import { EditElementSection } from "@/elements/edit-element-section";
 
 const CANVAS_WIDTH = 1920;
@@ -67,19 +67,26 @@ export default function Home() {
     id: string,
     updates: Partial<Omit<CanvasElement, "id">>,
   ) => {
-    const existing = canvasElements.find((el) => el.id === id);
-    if (!existing) return;
+    setCanvasElements((prev) => {
+      const existing = prev.find((el) => el.id === id);
+      if (!existing) return prev;
 
-    const updated = { ...existing, ...updates };
+      const updated = { ...existing, ...updates };
 
-    setCanvasElements((prev) =>
-      prev.map((el) => (el.id === id ? updated : el)),
-    );
+      const needsRebuild =
+        updated.type === "visualizer" &&
+        updates.config?.numBars !== undefined &&
+        updates.config.numBars !== existing.config?.numBars;
 
-    const instance = visualizerInstancesRef.current.get(id);
-    if (!instance) return;
+      if (needsRebuild) {
+        upsertElement(updated);
+      } else {
+        const instance = visualizerInstancesRef.current.get(id);
+        instance?.update?.(updates);
+      }
 
-    instance.update?.(updates);
+      return prev.map((el) => (el.id === id ? updated : el));
+    });
   };
 
   const [showAddElementScreen, setShowAddElementScreen] =

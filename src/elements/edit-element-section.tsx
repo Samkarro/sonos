@@ -3,6 +3,9 @@
 import { CanvasElement, FilterConfig } from "@/types/canvas-element.types";
 import { FilterPanel } from "./filter-panel";
 
+const TYPES = ["visualizer", "shape", "text"] as const;
+type Type = (typeof TYPES)[number];
+
 export const EditElementSection = ({
   updateElement,
   updateFilters,
@@ -31,6 +34,25 @@ export const EditElementSection = ({
     });
   };
 
+  // const TYPE_COMPONENTS: Record<Type, React.ReactNode> = {
+  //   visualizer: (
+  //     <VisualizerCreationTab
+  //       updateElement={updateElement}
+  //       initialValues={
+  //         selectedElement?.type === "visualizer"
+  //           ? {
+  //               id: selectedElement.id,
+  //               name: selectedElement.name,
+  //               config: selectedElement.config!,
+  //             }
+  //           : undefined
+  //       }
+  //     />
+  //   ),
+  //   shape: <ShapeCreationTab updateElement={updateElement} />,
+  //   text: <TextCreationTab updateElement={updateElement} />,
+  // };
+
   return (
     <div className="edit-element-section">
       {/* name */}
@@ -43,6 +65,29 @@ export const EditElementSection = ({
           onChange={(e) =>
             updateElement(selectedElement.id, { name: e.target.value })
           }
+        />
+      </div>
+      {/* dimensions */}
+      <div>
+        <label>x </label>
+        <input
+          type="range"
+          min={0}
+          max={1920}
+          step={1}
+          value={config.x}
+          onChange={(e) => updateConfig({ x: Number(e.target.value) })}
+        />
+      </div>
+      <div>
+        <label>y </label>
+        <input
+          type="range"
+          min={0}
+          max={1080}
+          step={1}
+          value={config.y}
+          onChange={(e) => updateConfig({ y: Number(e.target.value) })}
         />
       </div>
       {/* numBars */}

@@ -1,11 +1,13 @@
 import * as PIXI from "pixi.js";
-import { AudioAnalyser } from "./audio-analyzer";
-import { barHeightCalculator } from "./calculate-slope";
+import { AudioAnalyser } from "../audio-analyzer";
+import { barHeightCalculator } from "../calculate-slope";
 import { PixiInstance } from "@/types/pixi-instance.types";
 import { CanvasElement } from "@/types/canvas-element.types";
 import { AdjustmentFilter, BloomFilter } from "pixi-filters";
 
 export type VisualizerConfig = {
+  x: number;
+  y: number;
   numBars: number;
   width: number;
   height: number;
@@ -37,6 +39,8 @@ export const createVisualizer = (
   };
 
   const container = new PIXI.Container();
+  container.x = currentConfig.x ?? 0;
+  container.y = currentConfig.y ?? 0;
   const blur = new PIXI.BlurFilter();
   const colorMatrix = new PIXI.ColorMatrixFilter();
   const adjustments = new AdjustmentFilter();
@@ -124,6 +128,12 @@ export const createVisualizer = (
 
       if (next.width !== undefined || next.gap !== undefined) {
         barWidth = recalcLayout();
+      }
+
+      if (next.x !== undefined) container.x = next.x;
+      if (next.y !== undefined) container.y = next.y;
+      if (next.height !== undefined) {
+        bars.forEach((bar) => (bar.y = next.height!));
       }
     }
 

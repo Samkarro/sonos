@@ -1,7 +1,7 @@
 "use client";
 
 import { CanvasElement } from "@/types/canvas-element.types";
-import { VisualizerConfig } from "@/utils/create-visualizer";
+import { VisualizerConfig } from "@/utils/element-creators/create-visualizer";
 import { useState } from "react";
 import { ColorPicker } from "../color-picker";
 
