@@ -95,25 +95,3 @@
   border-radius: 10px;
   transition: 200ms;
 }
-
-.color-swatch-button {
-  height: 37.5px;
-  width: 100%;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-}
-
-.color-picker-overlay {
-  position: absolute;
-  top: -220%;
-  left: 25%;
-  z-index: 100;
-  background-color: var(--background);
-  border: 1px solid rgb(66, 66, 66);
-  border-radius: 12px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}

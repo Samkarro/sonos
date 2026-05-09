@@ -61,3 +61,25 @@ hr {
     color-scheme: dark;
   }
 }
+
+.color-swatch-button {
+  height: 30px;
+  width: 160px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.color-picker-overlay {
+  position: absolute;
+  top: -220%;
+  left: 25%;
+  z-index: 100;
+  background-color: var(--background);
+  border: 1px solid rgb(66, 66, 66);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

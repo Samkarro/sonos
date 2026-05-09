@@ -8,6 +8,7 @@
 .controls-section-container {
   width: 480px;
   padding: 20px;
+  border-right: 1px solid rgb(66, 66, 66);
 }
 
 .canvas-section-container {

@@ -4,6 +4,7 @@ import { CanvasElement, FilterConfig } from "@/types/canvas-element.types";
 import { FilterPanel } from "./filter-panel";
 import { EditVisualizer } from "./editing-areas/edit-visualizer";
 import { EditShape } from "./editing-areas/edit-shape";
+import "./styles/edit-element-section.styles.css";
 
 const TYPES = ["visualizer", "shape", "text"] as const;
 type Type = (typeof TYPES)[number];
@@ -49,7 +50,7 @@ export const EditElementSection = ({
   return (
     <div className="edit-element-section">
       {/* name */}
-      <div>
+      <div className="editable-property-input-container">
         <label htmlFor="name">Name</label>
         <input
           type="text"
@@ -61,8 +62,8 @@ export const EditElementSection = ({
         />
       </div>
       {/* dimensions */}
-      <div>
-        <label>x </label>
+      <div className="editable-property-input-container">
+        <label>x</label>
         <input
           type="range"
           min={0}
@@ -72,8 +73,8 @@ export const EditElementSection = ({
           onChange={(e) => updateElement(id, { x: Number(e.target.value) })}
         />
       </div>
-      <div>
-        <label>y </label>
+      <div className="editable-property-input-container">
+        <label>y</label>
         <input
           type="range"
           min={0}
@@ -84,7 +85,7 @@ export const EditElementSection = ({
         />
       </div>
       {/* width */}
-      <div>
+      <div className="editable-property-input-container">
         <label>Width: {width}</label>
         <input
           type="range"
@@ -96,7 +97,7 @@ export const EditElementSection = ({
         />
       </div>
       {/* height */}
-      <div>
+      <div className="editable-property-input-container">
         <label>Height: {height}</label>
         <input
           type="range"

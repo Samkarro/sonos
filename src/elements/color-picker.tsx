@@ -23,7 +23,6 @@ export const ColorPicker = ({
 
   return (
     <div className="add-element-input-container">
-      <label>Color</label>
       <button
         className="color-swatch-button clickable"
         style={{ backgroundColor: color }}

@@ -1,0 +1,11 @@
+.edit-element-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.editable-property-input-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
