@@ -19,6 +19,8 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
 
   return (
     <div className="filter-panel">
+      <hr />
+      <h2 className="filter-panel-heading">Filters</h2>
       {/* Blur */}
       <div className="filter-section">
         <div className="filter-header">
@@ -38,7 +40,7 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
           />
         </div>
         {filters.blur?.enabled && (
-          <>
+          <div className="filter-adjustments-container">
             <input
               type="range"
               min={0}
@@ -71,7 +73,7 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
               />
               Bind to bass
             </label>
-          </>
+          </div>
         )}
       </div>
 
@@ -95,8 +97,7 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
           />
         </div>
         {filters.bloom?.enabled && (
-          <>
-            <label>Strength</label>
+          <div className="filter-adjustments-container">
             <input
               type="range"
               min={0}
@@ -131,7 +132,7 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
               />
               Bind to bass
             </label>
-          </>
+          </div>
         )}
       </div>
 
@@ -156,7 +157,7 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
           />
         </div>
         {filters.colorMatrix?.enabled && (
-          <>
+          <div className="filter-adjustments-container">
             <label>Brightness</label>
             <input
               type="range"
@@ -239,7 +240,7 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
                 })
               }
             />
-          </>
+          </div>
         )}
       </div>
     </div>

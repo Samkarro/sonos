@@ -35,6 +35,7 @@ export const Sortable = ({
       ref={ref}
       className={`canvas-element-list-item ${isDragging ? "dragging" : ""}`}
     >
+      <span>{index + 1}</span>
       <p>{name}</p>
       <div className="canvas-item-list-actions-container">
         <img

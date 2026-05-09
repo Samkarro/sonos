@@ -246,7 +246,7 @@ export default function Home() {
           <DragDropProvider
             onDragEnd={(e) => handleDragEnd(e, setCanvasElements)}
           >
-            <ul className="canvas-element-list">
+            <ol className="canvas-element-list">
               {canvasElements.map((item, index) => (
                 <Sortable
                   key={item.id}
@@ -261,7 +261,7 @@ export default function Home() {
                   onEditFilters={(id) => setSelectedFilterElementId(id)}
                 />
               ))}
-            </ul>
+            </ol>
           </DragDropProvider>
         </div>
         <div className="canvas-element-editor-container">
