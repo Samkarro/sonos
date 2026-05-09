@@ -1,13 +1,13 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #111;
+  --background-light: #1a1a1a;
+  --background-lighter: #222;
+  --border: #333;
+  --border-lighter: #555;
+  --foreground: white;
+  --red: #ef4444;
+  --green: #4ade80;
+  --dark-green: #1e3a2a;
 }
 
 html {
@@ -52,7 +52,7 @@ a {
 
 hr {
   border: none;
-  border-bottom: 1px solid rgb(66, 66, 66);
+  border-bottom: 1px solid var(--background-light);
   margin: 20px 0px;
 }
 
@@ -76,7 +76,7 @@ hr {
   left: 25%;
   z-index: 100;
   background-color: var(--background);
-  border: 1px solid rgb(66, 66, 66);
+  border: 1px solid var(--background-light);
   border-radius: 12px;
   padding: 16px;
   display: flex;

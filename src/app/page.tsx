@@ -15,6 +15,7 @@ import { PixiInstance } from "@/types/pixi-instance.types";
 import { CanvasElement, FilterConfig } from "@/types/canvas-element.types";
 import { createText } from "@/utils/element-creators/create-text";
 import { EditElementSection } from "@/elements/edit-element-section";
+import { AudioPlayer } from "@/elements/audio-player";
 
 const CANVAS_WIDTH = 1920;
 const CANVAS_HEIGHT = 1080;
@@ -215,17 +216,13 @@ export default function Home() {
   return (
     <div className="view">
       <div className="controls-section-container">
-        <input
+        {/* <input
           type="file"
           accept="audio/*"
           onChange={(e) => handleAudioUpload(e, analyserRef, setAudioReady)}
           disabled={recording}
         />
-        <audio
-          ref={audioRef}
-          controls={!recording}
-          style={{ display: audioReady ? "block" : "none" }}
-        />
+        <audio ref={audioRef} controls={!recording} />
         <button
           className="record-button"
           style={{ display: audioReady ? "block" : "none" }}
@@ -235,7 +232,7 @@ export default function Home() {
           }
         >
           {recording ? "Recording..." : "Record!"}
-        </button>
+        </button> */}
         <div className="canvas-element-list-container">
           <button
             className="add-element-button"
@@ -280,6 +277,15 @@ export default function Home() {
       </div>
       <div className="canvas-section-container">
         <div className="canvas-container" ref={canvasRef}></div>
+        <AudioPlayer
+          audioRef={audioRef as React.RefObject<HTMLAudioElement>}
+          onFileUpload={(e) => handleAudioUpload(e, analyserRef, setAudioReady)}
+          audioReady={audioReady}
+          recording={recording}
+          onRecord={() =>
+            handleRecord(canvasRef, analyserRef, mediaRecorderRef, setRecording)
+          }
+        />
       </div>
       {showAddElementScreen && (
         <div
