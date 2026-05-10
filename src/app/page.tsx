@@ -219,7 +219,7 @@ export default function Home() {
       <div className="controls-section-container">
         <div className="canvas-element-list-container">
           <button
-            className="add-element-button"
+            className="add-element-button clickable"
             onClick={() => setShowAddElementScreen(true)}
           >
             Add Element

@@ -5,6 +5,35 @@
   width: 100%;
 }
 
+.canvas-element-list-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.add-element-button {
+  align-self: center;
+  background-color: var(--background-light);
+  height: 36px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  width: 80%;
+  transition: 150ms;
+  font-family: "Outfit", Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  color: var(--foreground);
+}
+
+.add-element-button:hover {
+  background-color: var(--background-lighter);
+  border-color: var(--border-lighter);
+}
+
+.add-element-button:active {
+  background-color: rgb(61, 61, 61);
+}
+
 .controls-section-container {
   display: grid;
   grid-template-rows: 2fr 3fr;
@@ -47,6 +76,7 @@
   border-bottom: 1px solid var(--border);
   padding: 20px;
   overflow: scroll;
+  width: 100%;
 }
 
 .canvas-element-editor-container {
