@@ -217,23 +217,6 @@ export default function Home() {
   return (
     <div className="view">
       <div className="controls-section-container">
-        {/* <input
-          type="file"
-          accept="audio/*"
-          onChange={(e) => handleAudioUpload(e, analyserRef, setAudioReady)}
-          disabled={recording}
-        />
-        <audio ref={audioRef} controls={!recording} />
-        <button
-          className="record-button"
-          style={{ display: audioReady ? "block" : "none" }}
-          disabled={recording || !audioReady}
-          onClick={() =>
-            handleRecord(canvasRef, analyserRef, mediaRecorderRef, setRecording)
-          }
-        >
-          {recording ? "Recording..." : "Record!"}
-        </button> */}
         <div className="canvas-element-list-container">
           <button
             className="add-element-button"
@@ -303,12 +286,7 @@ export default function Home() {
             setSelectedElementId(null);
           }}
         >
-          <AddElementSection
-            addElement={addElement}
-            updateElement={updateElement}
-            selectedElement={selectedElement}
-            updateFilters={updateFilters}
-          />
+          <AddElementSection addElement={addElement} />
         </div>
       )}
     </div>

@@ -2,6 +2,7 @@
 
 import { CanvasElement, FilterConfig } from "@/types/canvas-element.types";
 import { FilterPanel } from "./filter-panel";
+import "./styles/filter-panel.styles.css";
 import { EditVisualizer } from "./editing-areas/edit-visualizer";
 import { EditShape } from "./editing-areas/edit-shape";
 import "./styles/edit-element-section.styles.css";

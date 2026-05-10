@@ -9,7 +9,7 @@
 }
 
 .add-element-tab-button-container {
-  margin-top: 20px;
+  margin-top: 15px;
   display: flex;
   gap: 15px;
 }
@@ -58,7 +58,7 @@
 .add-element-input {
   padding: 10px 20px;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 7px;
 }
 
 .grid-2 {
@@ -83,7 +83,7 @@
   border: 1px solid rgb(51, 90, 51);
 
   width: 10%;
-  border-radius: 10px;
+  border-radius: 7px;
   transition: 200ms;
   font-weight: bold;
   align-self: center;
@@ -92,6 +92,6 @@
 .add-button:hover {
   border: 1px solid rgb(51, 90, 51);
   background-color: rgb(36, 63, 36);
-  border-radius: 10px;
+  border-radius: 7px;
   transition: 200ms;
 }
