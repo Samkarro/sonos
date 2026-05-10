@@ -3,6 +3,8 @@ import "./styles/sortable.styles.css";
 import { Dispatch, RefObject, SetStateAction } from "react";
 import { CanvasElement } from "@/types/canvas-element.types";
 import { PixiInstance } from "@/types/pixi-instance.types";
+import { RemoveSvg } from "../../public/images/remove.svg.tsx";
+import { EditSvg } from "../../public/images/edit.svg.tsx";
 
 interface SortableProps {
   id: string;
@@ -12,6 +14,7 @@ interface SortableProps {
   visualizerInstancesRef: RefObject<Map<string, PixiInstance>>;
   onEdit: (id: string) => void;
   onEditFilters: (id: string) => void;
+  isSelected: boolean;
 }
 
 export const Sortable = ({
@@ -21,6 +24,7 @@ export const Sortable = ({
   setCanvasElements,
   visualizerInstancesRef,
   onEdit,
+  isSelected,
 }: SortableProps) => {
   const { ref, isDragging } = useSortable({ id, index });
 
@@ -33,26 +37,14 @@ export const Sortable = ({
   return (
     <li
       ref={ref}
-      className={`canvas-element-list-item ${isDragging ? "dragging" : ""}`}
+      className={`canvas-element-list-item ${isDragging ? "dragging" : ""} ${isSelected ? "selected" : ""}`}
     >
       <span>{index + 1}</span>
       <p>{name}</p>
       <div className="canvas-item-list-actions-container">
-        <img
-          onClick={() => onEdit(id)}
-          className="canvas-item-list-action-button clickable"
-          src="./images/edit.png"
-          alt="Edit Element."
-        />
+        <EditSvg onEdit={onEdit} id={id} />
       </div>
-      <div className="canvas-item-list-actions-container">
-        <img
-          onClick={() => handleElementDeletion()}
-          className="canvas-item-list-action-button clickable"
-          src="./images/remove.png"
-          alt="Delete Element."
-        />
-      </div>
+      <RemoveSvg handleElementDeletion={handleElementDeletion} />
     </li>
   );
 };

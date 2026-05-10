@@ -4,7 +4,7 @@
   --background-lighter: #222;
   --border: #333;
   --border-lighter: #555;
-  --foreground: white;
+  --foreground: rgb(226, 226, 226);
   --red: #ef4444;
   --green: #4ade80;
   --dark-green: #1e3a2a;
@@ -12,6 +12,11 @@
 
 html {
   height: 100%;
+}
+
+::selection {
+  color: var(--dark-green);
+  background-color: #4ade80;
 }
 
 html,

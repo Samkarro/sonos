@@ -257,6 +257,7 @@ export default function Home() {
                     setSelectedElementId(id);
                   }}
                   onEditFilters={(id) => setSelectedFilterElementId(id)}
+                  isSelected={selectedElementId === item.id}
                 />
               ))}
             </ol>

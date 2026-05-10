@@ -84,6 +84,8 @@
 .missing-element-state-emote {
   font-size: 70px;
   margin-bottom: 10px;
+  font-family: monospace;
+  letter-spacing: -10px;
 }
 
 .missing-element-state-text {
