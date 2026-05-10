@@ -45,6 +45,7 @@ export const MenuBar = ({
         >
           File
         </button>
+
         {openMenu === "file" && (
           <div className="menu-dropdown">
             <button
@@ -75,6 +76,12 @@ export const MenuBar = ({
             </button>
           </div>
         )}
+      </div>
+      <div className="menu-bar-item">
+        <span className="sonos-logo">Sonos</span>
+      </div>
+      <div className="menu-bar-item">
+        <span className="sonos-version">Ver 1.0.0</span>
       </div>
     </div>
   );

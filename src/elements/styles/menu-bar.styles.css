@@ -1,6 +1,7 @@
 .menu-bar {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 2px;
   padding: 0 8px;
   height: var(--menu-bar-height);
@@ -11,6 +12,12 @@
 
 .menu-bar-item {
   position: relative;
+}
+
+.sonos-logo {
+  font-family: "Courier New", Courier, monospace;
+  font-weight: 900;
+  padding-left: 20%;
 }
 
 .menu-bar-trigger {
