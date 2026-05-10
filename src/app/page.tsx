@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import "./editor.styles.css";
+import "../elements/styles/edit-element-section.styles.css";
 import * as PIXI from "pixi.js";
 import { createAudioAnalyser } from "@/utils/audio-analyzer";
 import { handleRecord } from "@/utils/helpers/handle-recording";
@@ -269,8 +270,14 @@ export default function Home() {
               selectedElement={selectedElement}
             />
           ) : (
-            <div>
-              <p>There's nothing to edit ;/</p>
+            <div className="missing-element-state">
+              <span className="missing-element-state-emote">;/</span>
+              <span className="missing-element-state-text">
+                There's nothing to edit
+              </span>
+              <span className="missing-element-state-subtext">
+                Select an element to access its properties.
+              </span>
             </div>
           )}
         </div>

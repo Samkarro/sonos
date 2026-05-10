@@ -22,7 +22,15 @@ export const EditElementSection = ({
   selectedElement: CanvasElement | null;
 }) => {
   if (!selectedElement) {
-    return <div className="edit-element-section">Deleted ;p</div>;
+    return (
+      <div className="missing-element-state">
+        <span className="missing-element-state-emote">;P</span>
+        <span className="missing-element-state-text">Element deleted</span>
+        <span className="missing-element-state-subtext">
+          Select a new element to edit.
+        </span>
+      </div>
+    );
   }
 
   const config = selectedElement.config!;
