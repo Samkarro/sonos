@@ -7,12 +7,14 @@ export const AudioPlayer = ({
   audioReady,
   recording,
   onRecord,
+  triggerRef,
 }: {
   audioRef: React.RefObject<HTMLAudioElement> | null;
   onFileUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   audioReady: boolean;
   recording: boolean;
   onRecord: () => void;
+  triggerRef?: React.RefObject<(() => void) | null>;
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -24,6 +26,17 @@ export const AudioPlayer = ({
   useEffect(() => {
     if (fileInputRef.current) fileInputRef.current.value = "";
   }, []);
+
+  useEffect(() => {
+    if (triggerRef) {
+      triggerRef.current = () => {
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+          fileInputRef.current.click();
+        }
+      };
+    }
+  }, [triggerRef]);
 
   useEffect(() => {
     const audio = audioRef?.current;
@@ -106,6 +119,14 @@ export const AudioPlayer = ({
   return (
     <div className="player-wrapper">
       <audio ref={audioRef} style={{ display: "none" }} />
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="audio/*"
+        onChange={onFileUpload}
+        disabled={recording}
+        style={{ display: "none" }}
+      />
       <div className="player-player">
         <div className="player-controls-row">
           <div className="player-left-controls">
@@ -237,16 +258,13 @@ export const AudioPlayer = ({
       {!audioReady && (
         <div
           className="player-overlay"
-          onClick={() => fileInputRef.current?.click()}
+          onClick={() => {
+            if (fileInputRef.current) {
+              fileInputRef.current.value = "";
+              fileInputRef.current.click();
+            }
+          }}
         >
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="audio/*"
-            onChange={onFileUpload}
-            disabled={recording}
-            style={{ display: "none" }}
-          />
           <div className="player-overlay-content">
             <div className="player-overlay-dropzone">
               <div className="player-overlay-icon">+</div>

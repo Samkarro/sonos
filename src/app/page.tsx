@@ -17,6 +17,7 @@ import { CanvasElement, FilterConfig } from "@/types/canvas-element.types";
 import { createText } from "@/utils/element-creators/create-text";
 import { EditElementSection } from "@/elements/edit-element-section";
 import { AudioPlayer } from "@/elements/audio-player";
+import { MenuBar } from "@/elements/menu-bar";
 
 const CANVAS_WIDTH = 1920;
 const CANVAS_HEIGHT = 1080;
@@ -24,6 +25,7 @@ const CANVAS_HEIGHT = 1080;
 export default function Home() {
   const canvasRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const audioTriggerRef = useRef<(() => void) | null>(null);
   const analyserRef = useRef<ReturnType<typeof createAudioAnalyser> | null>(
     null,
   );
@@ -215,80 +217,103 @@ export default function Home() {
   }, [canvasElements]);
 
   return (
-    <div className="view">
-      <div className="controls-section-container">
-        <div className="canvas-element-list-container">
-          <button
-            className="add-element-button clickable"
-            onClick={() => setShowAddElementScreen(true)}
+    <div className="view-wrapper">
+      <MenuBar
+        onReset={() => {
+          setCanvasElements([]);
+          setSelectedElementId(null);
+        }}
+        onUploadAudio={() => audioTriggerRef.current?.()}
+        onImport={() => {
+          /* TODO */
+        }}
+        onExport={() => {
+          /* TODO */
+        }}
+      />
+      <div className="view">
+        <div className="controls-section-container">
+          <div className="canvas-element-list-container">
+            <button
+              className="add-element-button clickable"
+              onClick={() => setShowAddElementScreen(true)}
+            >
+              Add Element
+            </button>
+            <DragDropProvider
+              onDragEnd={(e) => handleDragEnd(e, setCanvasElements)}
+            >
+              <ol className="canvas-element-list">
+                {canvasElements.map((item, index) => (
+                  <Sortable
+                    key={item.id}
+                    id={item.id}
+                    index={index}
+                    name={item.name}
+                    setCanvasElements={setCanvasElements}
+                    visualizerInstancesRef={visualizerInstancesRef}
+                    onEdit={(id) => {
+                      setSelectedElementId(id);
+                    }}
+                    onEditFilters={(id) => setSelectedFilterElementId(id)}
+                    isSelected={selectedElementId === item.id}
+                  />
+                ))}
+              </ol>
+            </DragDropProvider>
+          </div>
+          <div className="canvas-element-editor-container">
+            {selectedElementId != null ? (
+              <EditElementSection
+                updateElement={updateElement}
+                updateFilters={updateFilters}
+                selectedElement={selectedElement}
+              />
+            ) : (
+              <div className="missing-element-state">
+                <span className="missing-element-state-emote">;/</span>
+                <span className="missing-element-state-text">
+                  There's nothing to edit
+                </span>
+                <span className="missing-element-state-subtext">
+                  Select an element to access its properties.
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="canvas-section-container">
+          <div className="canvas-container" ref={canvasRef}></div>
+          <AudioPlayer
+            audioRef={audioRef as React.RefObject<HTMLAudioElement>}
+            onFileUpload={(e) =>
+              handleAudioUpload(e, analyserRef, setAudioReady)
+            }
+            audioReady={audioReady}
+            recording={recording}
+            onRecord={() =>
+              handleRecord(
+                canvasRef,
+                analyserRef,
+                mediaRecorderRef,
+                setRecording,
+              )
+            }
+            triggerRef={audioTriggerRef}
+          />
+        </div>
+        {showAddElementScreen && (
+          <div
+            className="add-element-section-overlay"
+            onClick={() => {
+              setShowAddElementScreen(false);
+              setSelectedElementId(null);
+            }}
           >
-            Add Element
-          </button>
-          <DragDropProvider
-            onDragEnd={(e) => handleDragEnd(e, setCanvasElements)}
-          >
-            <ol className="canvas-element-list">
-              {canvasElements.map((item, index) => (
-                <Sortable
-                  key={item.id}
-                  id={item.id}
-                  index={index}
-                  name={item.name}
-                  setCanvasElements={setCanvasElements}
-                  visualizerInstancesRef={visualizerInstancesRef}
-                  onEdit={(id) => {
-                    setSelectedElementId(id);
-                  }}
-                  onEditFilters={(id) => setSelectedFilterElementId(id)}
-                  isSelected={selectedElementId === item.id}
-                />
-              ))}
-            </ol>
-          </DragDropProvider>
-        </div>
-        <div className="canvas-element-editor-container">
-          {selectedElementId != null ? (
-            <EditElementSection
-              updateElement={updateElement}
-              updateFilters={updateFilters}
-              selectedElement={selectedElement}
-            />
-          ) : (
-            <div className="missing-element-state">
-              <span className="missing-element-state-emote">;/</span>
-              <span className="missing-element-state-text">
-                There's nothing to edit
-              </span>
-              <span className="missing-element-state-subtext">
-                Select an element to access its properties.
-              </span>
-            </div>
-          )}
-        </div>
+            <AddElementSection addElement={addElement} />
+          </div>
+        )}
       </div>
-      <div className="canvas-section-container">
-        <div className="canvas-container" ref={canvasRef}></div>
-        <AudioPlayer
-          audioRef={audioRef as React.RefObject<HTMLAudioElement>}
-          onFileUpload={(e) => handleAudioUpload(e, analyserRef, setAudioReady)}
-          audioReady={audioReady}
-          recording={recording}
-          onRecord={() =>
-            handleRecord(canvasRef, analyserRef, mediaRecorderRef, setRecording)
-          }
-        />
-      </div>
-      {showAddElementScreen && (
-        <div
-          className="add-element-section-overlay"
-          onClick={() => {
-            setShowAddElementScreen(false);
-            setSelectedElementId(null);
-          }}
-        >
-          <AddElementSection addElement={addElement} />
-        </div>
-      )}
     </div>
   );
 }

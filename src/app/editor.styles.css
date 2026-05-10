@@ -1,7 +1,7 @@
 .view {
   display: flex;
   flex-direction: row;
-  height: 100vh;
+  height: calc(100vh - var(--menu-bar-height));
   width: 100%;
 }
 
@@ -37,7 +37,7 @@
 .controls-section-container {
   display: grid;
   grid-template-rows: 2fr 3fr;
-  height: 100vh;
+  height: calc(100vh - var(--menu-bar-height));
   width: 480px;
   padding: 20px 0px;
   border-right: 1px solid var(--border);

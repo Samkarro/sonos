@@ -8,6 +8,7 @@
   --red: #ef4444;
   --green: #4ade80;
   --dark-green: #1e3a2a;
+  --menu-bar-height: 36px;
 }
 
 html {
@@ -97,4 +98,9 @@ hr {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.view-wrapper {
+  display: flex;
+  flex-direction: column;
 }
