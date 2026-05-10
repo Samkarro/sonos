@@ -42,6 +42,16 @@ body {
   margin: 0;
 }
 
+/* Deleting scrollbars here. */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
 a {
   color: inherit;
   text-decoration: none;
