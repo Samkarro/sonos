@@ -1,17 +1,23 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #111;
+  --background-light: #1a1a1a;
+  --background-lighter: #222;
+  --border: #333;
+  --border-lighter: #555;
+  --foreground: rgb(226, 226, 226);
+  --red: #ef4444;
+  --green: #4ade80;
+  --dark-green: #1e3a2a;
+  --menu-bar-height: 36px;
 }
 
 html {
   height: 100%;
+}
+
+::selection {
+  color: var(--dark-green);
+  background-color: #4ade80;
 }
 
 html,
@@ -26,7 +32,7 @@ body {
   flex-direction: column;
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Outfit", Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -35,6 +41,16 @@ body {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+}
+
+/* Deleting scrollbars here. */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
 }
 
 a {
@@ -52,7 +68,7 @@ a {
 
 hr {
   border: none;
-  border-bottom: 1px solid rgb(66, 66, 66);
+  border-bottom: 1px solid var(--border);
   margin: 20px 0px;
 }
 
@@ -60,4 +76,31 @@ hr {
   html {
     color-scheme: dark;
   }
+}
+
+.color-swatch-button {
+  height: 30px;
+  width: 160px;
+  border-radius: 7px;
+  border: none;
+  cursor: pointer;
+}
+
+.color-picker-overlay {
+  position: absolute;
+  top: -220%;
+  left: 25%;
+  z-index: 100;
+  background-color: var(--background);
+  border: 1px solid var(--background-light);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.view-wrapper {
+  display: flex;
+  flex-direction: column;
 }

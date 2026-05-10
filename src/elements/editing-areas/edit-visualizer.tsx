@@ -1,4 +1,5 @@
 import { CanvasElement } from "@/types/canvas-element.types";
+import { ColorPicker } from "../color-picker";
 
 export const EditVisualizer = ({
   element,
@@ -25,9 +26,15 @@ export const EditVisualizer = ({
   return (
     <>
       {/* numBars */}
-      <div>
+      <div className="editable-property-input-container">
         <label>Bars: {config.numBars}</label>
         <input
+          className="editable-property-input"
+          style={
+            {
+              "--pct": `${((config.numBars - 3) / (100 - 3)) * 100}%`,
+            } as React.CSSProperties
+          }
           type="range"
           min={3}
           max={100}
@@ -38,9 +45,15 @@ export const EditVisualizer = ({
       </div>
 
       {/* gap */}
-      <div>
+      <div className="editable-property-input-container">
         <label>Gap: {config.gap}</label>
         <input
+          className="editable-property-input"
+          style={
+            {
+              "--pct": `${((config.gap - 0) / (20 - 0)) * 100}%`,
+            } as React.CSSProperties
+          }
           type="range"
           min={0}
           max={20}
@@ -51,12 +64,11 @@ export const EditVisualizer = ({
       </div>
 
       {/* fill */}
-      <div>
+      <div className="editable-property-input-container">
         <label>Color</label>
-        <input
-          type="color"
-          value={config.fill}
-          onChange={(e) => updateConfig({ fill: e.target.value })}
+        <ColorPicker
+          color={config.fill}
+          onChange={(color) => updateConfig({ fill: color })}
         />
       </div>
     </>

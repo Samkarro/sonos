@@ -1,13 +1,15 @@
 .canvas-element-list-item {
   padding: 5px 10px;
-  border: 1px solid gray;
-  border-radius: 15px;
-  width: 80%;
+  background-color: var(--background-light);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  width: 100%;
+  height: 50px;
 
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: 200ms;
+  transition: 150ms;
 }
 
 .canvas-element-list-item p {
@@ -15,9 +17,16 @@
   text-align: center;
 }
 
+.canvas-element-list-item.selected {
+  background-color: var(--dark-green);
+  border-color: var(--green);
+  color: var(--green);
+}
+
 .canvas-element-list-item:hover {
   cursor: grab;
-  background-color: rgb(26, 26, 26);
+  background-color: var(--background-lighter);
+  border-color: var(--border-lighter);
 }
 
 .canvas-element-list-item:active,
@@ -32,4 +41,27 @@
 .canvas-item-list-action-button {
   height: 25px;
   width: 25px;
+}
+.canvas-item-list-actions-container svg {
+  color: var(--foreground);
+  height: 25px;
+  width: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.canvas-element-list-item.selected .canvas-item-list-actions-container svg {
+  color: var(--green);
+}
+
+.canvas-element-list-item:has(.canvas-element-list-action-remove:hover) svg {
+  color: var(--red);
+  transition: 150ms;
+}
+
+.canvas-element-list-item:has(.canvas-element-list-action-remove:hover) {
+  border-color: var(--red);
+  background-color: rgb(48, 22, 22);
+  color: var(--red);
 }

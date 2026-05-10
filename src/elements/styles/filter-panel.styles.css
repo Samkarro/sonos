@@ -1,21 +1,24 @@
 .filter-section {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 12px;
   padding: 10px 0;
-  border-bottom: 1px solid rgb(66, 66, 66);
 }
 
 .filter-panel {
   background-color: var(--background);
-  padding: 40px;
-  width: 500px;
+  width: 100%;
+}
+
+.filter-panel-heading {
+  margin-bottom: 10px;
 }
 
 .filter-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-size: 18px;
 }
 
 .filter-panel-overlay {
@@ -27,4 +30,11 @@
   justify-content: center;
   border-radius: 20px;
   z-index: 10;
+}
+
+.filter-adjustments-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 0px 0px 20px;
 }

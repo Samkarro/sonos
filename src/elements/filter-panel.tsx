@@ -19,11 +19,14 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
 
   return (
     <div className="filter-panel">
+      <hr />
+      <h2 className="filter-panel-heading">Filters</h2>
       {/* Blur */}
       <div className="filter-section">
         <div className="filter-header">
           <label>Blur</label>
           <input
+            className="editable-property-checkbox"
             type="checkbox"
             checked={filters.blur?.enabled ?? false}
             onChange={(e) =>
@@ -38,8 +41,14 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
           />
         </div>
         {filters.blur?.enabled && (
-          <>
+          <div className="filter-adjustments-container">
             <input
+              className="editable-property-input mw"
+              style={
+                {
+                  "--pct": `${(((filters.blur?.strength ?? 0) - 0) / (20 - 0)) * 100}%`,
+                } as React.CSSProperties
+              }
               type="range"
               min={0}
               max={20}
@@ -57,6 +66,7 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
             />
             <label>
               <input
+                className="editable-property-checkbox"
                 type="checkbox"
                 checked={filters.blur?.bindToBass ?? false}
                 onChange={(e) =>
@@ -71,7 +81,7 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
               />
               Bind to bass
             </label>
-          </>
+          </div>
         )}
       </div>
 
@@ -80,6 +90,7 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
         <div className="filter-header">
           <label>Bloom</label>
           <input
+            className="editable-property-checkbox"
             type="checkbox"
             checked={filters.bloom?.enabled ?? false}
             onChange={(e) =>
@@ -95,9 +106,14 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
           />
         </div>
         {filters.bloom?.enabled && (
-          <>
-            <label>Strength</label>
+          <div className="filter-adjustments-container">
             <input
+              className="editable-property-input mw"
+              style={
+                {
+                  "--pct": `${(((filters.bloom?.strength ?? 0) - 0) / (20 - 0)) * 100}%`,
+                } as React.CSSProperties
+              }
               type="range"
               min={0}
               max={20}
@@ -116,6 +132,7 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
             />
             <label>
               <input
+                className="editable-property-checkbox"
                 type="checkbox"
                 checked={filters.bloom?.bindToBass ?? false}
                 onChange={(e) =>
@@ -131,7 +148,7 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
               />
               Bind to bass
             </label>
-          </>
+          </div>
         )}
       </div>
 
@@ -140,6 +157,7 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
         <div className="filter-header">
           <label>Color Adjustments</label>
           <input
+            className="editable-property-checkbox"
             type="checkbox"
             checked={filters.colorMatrix?.enabled ?? false}
             onChange={(e) =>
@@ -156,9 +174,15 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
           />
         </div>
         {filters.colorMatrix?.enabled && (
-          <>
+          <div className="filter-adjustments-container">
             <label>Brightness</label>
             <input
+              className="editable-property-input mw"
+              style={
+                {
+                  "--pct": `${(((filters.colorMatrix?.brightness ?? 0) - 0) / (2 - 0)) * 100}%`,
+                } as React.CSSProperties
+              }
               type="range"
               min={0}
               max={2}
@@ -179,6 +203,7 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
             />
             <label>
               <input
+                className="editable-property-checkbox"
                 type="checkbox"
                 checked={filters.colorMatrix?.brightnessBind ?? false}
                 onChange={(e) =>
@@ -200,6 +225,12 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
 
             <label>Saturation</label>
             <input
+              className="editable-property-input mw"
+              style={
+                {
+                  "--pct": `${(((filters.colorMatrix?.saturation ?? 0) - 0) / (2 - 0)) * 100}%`,
+                } as React.CSSProperties
+              }
               type="range"
               min={0}
               max={2}
@@ -221,6 +252,12 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
 
             <label>Contrast</label>
             <input
+              className="editable-property-input mw"
+              style={
+                {
+                  "--pct": `${(((filters.colorMatrix?.contrast ?? 0) - -1) / (1 - -1)) * 100}%`,
+                } as React.CSSProperties
+              }
               type="range"
               min={-1}
               max={1}
@@ -239,7 +276,7 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
                 })
               }
             />
-          </>
+          </div>
         )}
       </div>
     </div>

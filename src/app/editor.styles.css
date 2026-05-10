@@ -1,28 +1,61 @@
 .view {
   display: flex;
   flex-direction: row;
-  height: 100vh;
+  height: calc(100vh - var(--menu-bar-height));
   width: 100%;
 }
 
+.canvas-element-list-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.add-element-button {
+  align-self: center;
+  background-color: var(--background-light);
+  height: 36px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  width: 80%;
+  transition: 150ms;
+  font-family: "Outfit", Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  color: var(--foreground);
+}
+
+.add-element-button:hover {
+  background-color: var(--background-lighter);
+  border-color: var(--border-lighter);
+}
+
+.add-element-button:active {
+  background-color: rgb(61, 61, 61);
+}
+
 .controls-section-container {
+  display: grid;
+  grid-template-rows: 2fr 3fr;
+  height: calc(100vh - var(--menu-bar-height));
   width: 480px;
-  padding: 20px;
+  padding: 20px 0px;
+  border-right: 1px solid var(--border);
 }
 
 .canvas-section-container {
   display: flex;
+  flex-direction: column;
   align-items: center;
 
   overflow: auto;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: start;
   width: 100%;
-  padding: 20px;
 }
 
 .canvas-container {
-  height: 40rem;
+  width: 100%;
   aspect-ratio: 16 / 9;
 }
 
@@ -32,16 +65,23 @@
   object-fit: block;
 }
 
-.canvas-element-list-container {
-  padding: 20px 0px;
-}
-
 .canvas-element-list {
   display: flex;
   flex-direction: column;
   align-items: center;
   list-style-type: none;
   gap: 10px;
+  min-height: 300px;
+  max-height: 400px;
+  border-bottom: 1px solid var(--border);
+  padding: 20px;
+  overflow: scroll;
+  width: 100%;
+}
+
+.canvas-element-editor-container {
+  height: 100%;
+  overflow: scroll;
 }
 
 /* TODO: move this to its respective stylesheet */
@@ -53,4 +93,36 @@
   height: 100vh;
   width: 100vw;
   background-color: rgba(0, 0, 0, 0.774);
+}
+
+.canvas-element-editor-container {
+  padding: 20px;
+}
+
+.missing-element-state {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  gap: 10px;
+  flex-direction: column;
+  align-content: center;
+  justify-content: center;
+  color: var(--border-lighter);
+  padding: 10px;
+}
+
+.missing-element-state span {
+  display: block;
+  text-align: center;
+}
+
+.missing-element-state-emote {
+  font-size: 70px;
+  margin-bottom: 10px;
+  font-family: monospace;
+  letter-spacing: -10px;
+}
+
+.missing-element-state-text {
+  font-size: 25px;
 }

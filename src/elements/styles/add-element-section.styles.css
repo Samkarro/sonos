@@ -4,19 +4,19 @@
   padding: 40px;
   width: 1000px;
   background-color: var(--background);
-  border: 1px solid rgb(66, 66, 66);
+  border: 1px solid var(--border);
   border-radius: 20px;
 }
 
 .add-element-tab-button-container {
-  margin-top: 20px;
+  margin-top: 15px;
   display: flex;
   gap: 15px;
 }
 
 .add-element-tab-button {
   padding: 8px 20px;
-  border-bottom: 1px solid rgb(66, 66, 66);
+  border-bottom: 1px solid var(--border);
   transition: 200ms;
 }
 
@@ -25,20 +25,20 @@
 }
 
 .add-element-tab-button:active {
-  background-color: rgb(100, 100, 100);
+  background-color: var(--border-lighter);
   transition: 50ms;
 }
 
 .add-element-tab-button.tab-button-active {
-  background-color: rgb(66, 66, 66);
+  background-color: var(--border);
 }
 
 .add-element-tab-button.tab-button-active:hover {
-  background-color: rgb(80, 80, 80);
+  background-color: var(--border);
 }
 
 .add-element-tab-button.tab-button-active:active {
-  background-color: rgb(100, 100, 100);
+  background-color: var(--border-lighter);
   transition: 50ms;
 }
 
@@ -57,8 +57,8 @@
 
 .add-element-input {
   padding: 10px 20px;
-  border: 1px solid rgb(66, 66, 66);
-  border-radius: 10px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
 }
 
 .grid-2 {
@@ -83,7 +83,7 @@
   border: 1px solid rgb(51, 90, 51);
 
   width: 10%;
-  border-radius: 10px;
+  border-radius: 7px;
   transition: 200ms;
   font-weight: bold;
   align-self: center;
@@ -92,28 +92,6 @@
 .add-button:hover {
   border: 1px solid rgb(51, 90, 51);
   background-color: rgb(36, 63, 36);
-  border-radius: 10px;
+  border-radius: 7px;
   transition: 200ms;
-}
-
-.color-swatch-button {
-  height: 37.5px;
-  width: 100%;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-}
-
-.color-picker-overlay {
-  position: absolute;
-  top: -220%;
-  left: 25%;
-  z-index: 100;
-  background-color: var(--background);
-  border: 1px solid rgb(66, 66, 66);
-  border-radius: 12px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
 }
