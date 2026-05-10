@@ -49,6 +49,11 @@
   overflow: scroll;
 }
 
+.canvas-element-editor-container {
+  height: 100%;
+  overflow: scroll;
+}
+
 /* TODO: move this to its respective stylesheet */
 .add-element-section-overlay {
   display: flex;

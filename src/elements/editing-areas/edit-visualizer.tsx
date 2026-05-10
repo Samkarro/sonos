@@ -29,6 +29,12 @@ export const EditVisualizer = ({
       <div className="editable-property-input-container">
         <label>Bars: {config.numBars}</label>
         <input
+          className="editable-property-input"
+          style={
+            {
+              "--pct": `${((config.numBars - 3) / (100 - 3)) * 100}%`,
+            } as React.CSSProperties
+          }
           type="range"
           min={3}
           max={100}
@@ -42,6 +48,12 @@ export const EditVisualizer = ({
       <div className="editable-property-input-container">
         <label>Gap: {config.gap}</label>
         <input
+          className="editable-property-input"
+          style={
+            {
+              "--pct": `${((config.gap - 0) / (20 - 0)) * 100}%`,
+            } as React.CSSProperties
+          }
           type="range"
           min={0}
           max={20}

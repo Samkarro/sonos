@@ -37,25 +37,28 @@ export const EditElementSection = ({
   const config = selectedElement.config!;
   const { id, x, y, width, height } = selectedElement;
 
-  const updateConfig = (partial: Partial<typeof config>) => {
-    updateElement?.(id, {
-      config: {
-        ...config,
-        ...partial,
-      },
-    });
-  };
+  // const updateConfig = (partial: Partial<typeof config>) => {
+  //   updateElement?.(id, {
+  //     config: {
+  //       ...config,
+  //       ...partial,
+  //     },
+  //   });
+  // };
 
   const TYPE_COMPONENTS: Record<Type, React.ReactNode> = {
     visualizer: (
       <EditVisualizer element={selectedElement} updateElement={updateElement} />
     ),
+    // TODO: add the missing fields that should be editable
     shape: (
       <EditShape element={selectedElement} updateElement={updateElement} />
     ),
+    // TODO: Actuall implement this please
     text: <></>,
   };
 
+  // TODO: add color as a default field, fix dimensions,
   return (
     <div className="edit-element-section">
       {/* name */}
@@ -74,6 +77,12 @@ export const EditElementSection = ({
       <div className="editable-property-input-container">
         <label>x</label>
         <input
+          className="editable-property-input"
+          style={
+            {
+              "--pct": `${((x - 0) / (1920 - 0)) * 100}%`,
+            } as React.CSSProperties
+          }
           type="range"
           min={0}
           max={1920}
@@ -85,6 +94,12 @@ export const EditElementSection = ({
       <div className="editable-property-input-container">
         <label>y</label>
         <input
+          className="editable-property-input"
+          style={
+            {
+              "--pct": `${((y - 0) / (1080 - 0)) * 100}%`,
+            } as React.CSSProperties
+          }
           type="range"
           min={0}
           max={1080}
@@ -97,6 +112,12 @@ export const EditElementSection = ({
       <div className="editable-property-input-container">
         <label>Width: {width}</label>
         <input
+          className="editable-property-input"
+          style={
+            {
+              "--pct": `${((width - 0) / (1920 - 0)) * 100}%`,
+            } as React.CSSProperties
+          }
           type="range"
           min={1}
           max={1920}
@@ -109,6 +130,12 @@ export const EditElementSection = ({
       <div className="editable-property-input-container">
         <label>Height: {height}</label>
         <input
+          className="editable-property-input"
+          style={
+            {
+              "--pct": `${((height - 0) / (1080 - 0)) * 100}%`,
+            } as React.CSSProperties
+          }
           type="range"
           min={1}
           max={1080}

@@ -28,6 +28,12 @@ export const EditShape = ({
       <div>
         <label>borderRadius: {config.borderRadius}</label>
         <input
+          className="editable-property-input"
+          style={
+            {
+              "--pct": `${((config.borderRadius - 0) / (element.height / 2 - 0)) * 100}%`,
+            } as React.CSSProperties
+          }
           type="range"
           min={0}
           max={element.height / 2}
