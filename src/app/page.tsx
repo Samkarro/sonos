@@ -18,6 +18,8 @@ import { createText } from "@/utils/element-creators/create-text";
 import { EditElementSection } from "@/elements/edit-element-section";
 import { AudioPlayer } from "@/elements/audio-player";
 import { MenuBar } from "@/elements/menu-bar";
+import { importProject } from "@/utils/helpers/handle-import-project";
+import { exportProject } from "@/utils/helpers/handle-export-project";
 
 const CANVAS_WIDTH = 1920;
 const CANVAS_HEIGHT = 1080;
@@ -224,12 +226,14 @@ export default function Home() {
           setSelectedElementId(null);
         }}
         onUploadAudio={() => audioTriggerRef.current?.()}
-        onImport={() => {
-          /* TODO */
-        }}
-        onExport={() => {
-          /* TODO */
-        }}
+        onImport={() =>
+          importProject(setCanvasElements, (elements) => {
+            // rebuild all pixi instances from the imported elements
+            elements.forEach((el) => upsertElement(el));
+            setSelectedElementId(null);
+          })
+        }
+        onExport={() => exportProject(canvasElements)}
       />
       <div className="view">
         <div className="controls-section-container">
