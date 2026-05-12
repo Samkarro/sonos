@@ -63,7 +63,7 @@ export default function Home() {
 
     const instance = visualizerInstancesRef.current.get(id);
     if (!instance) return;
-    console.log("updateFilters", id, instance, filterConfig); // ← add this
+    console.log("updateFilters", id, instance, filterConfig);
     instance.update?.({
       filters: filterConfig,
     });
