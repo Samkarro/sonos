@@ -11,6 +11,9 @@
   align-items: center;
   width: 100%;
 }
+.canvas-element-list {
+  height: 100%;
+}
 
 .add-element-button {
   align-self: center;

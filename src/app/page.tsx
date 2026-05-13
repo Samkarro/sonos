@@ -245,7 +245,7 @@ export default function Home() {
               Add Element
             </button>
             <DragDropProvider
-              onDragEnd={(e) => handleDragEnd(e, setCanvasElements)}
+              onDragOver={(e) => handleDragEnd(e, setCanvasElements)}
             >
               <ol className="canvas-element-list">
                 {canvasElements.map((item, index) => (
