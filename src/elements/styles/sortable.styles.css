@@ -1,10 +1,14 @@
+li {
+  overflow: hidden;
+}
+
 .canvas-element-list-item {
   padding: 5px 10px;
   background-color: var(--background-light);
   border: 1px solid var(--border);
   border-radius: 7px;
   width: 100%;
-  height: 50px;
+  min-height: 50px;
 
   display: flex;
   justify-content: space-between;
@@ -13,7 +17,11 @@
 }
 
 .canvas-element-list-item p {
-  width: 100%;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   text-align: center;
 }
 
@@ -46,6 +54,7 @@
   color: var(--foreground);
   height: 25px;
   width: 25px;
+  min-width: 25px;
   display: flex;
   align-items: center;
   justify-content: center;
