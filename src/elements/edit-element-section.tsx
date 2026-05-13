@@ -68,6 +68,7 @@ export const EditElementSection = ({
           type="text"
           name="name"
           value={!selectedElement.name ? "" : selectedElement.name}
+          maxLength={30}
           onChange={(e) =>
             updateElement(selectedElement.id, { name: e.target.value })
           }

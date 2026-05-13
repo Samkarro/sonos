@@ -40,7 +40,7 @@ export const Sortable = ({
       className={`canvas-element-list-item ${isDragging ? "dragging" : ""} ${isSelected ? "selected" : ""}`}
     >
       <span>{index + 1}</span>
-      <p>{name}</p>
+      <p>{name.length <= 20 ? `${name}` : `${name.slice(0, 19)}...`}</p>
       <div className="canvas-item-list-actions-container">
         <EditSvg onEdit={onEdit} id={id} />
       </div>
