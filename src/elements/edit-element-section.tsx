@@ -63,8 +63,9 @@ export const EditElementSection = ({
     <div className="edit-element-section">
       {/* name */}
       <div className="editable-property-input-container">
-        <label htmlFor="name">Name</label>
         <input
+          className="edit-name-input-field"
+          placeholder="Element name"
           type="text"
           name="name"
           value={!selectedElement.name ? "" : selectedElement.name}

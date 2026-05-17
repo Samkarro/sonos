@@ -51,3 +51,20 @@
   border: 2px solid var(--green);
   cursor: pointer;
 }
+
+.edit-name-input-field {
+  width: 100%;
+  border-radius: 7px;
+  height: 3em;
+  border: 1px solid var(--border);
+  background-color: var(--background-lighter);
+  outline: none;
+  transition: 200ms;
+  font-size: 15px;
+  padding: 5px 20px;
+  font-family: "Outfit", Arial, Helvetica, sans-serif;
+}
+
+.edit-name-input-field:focus {
+  border: 2px solid var(--green);
+}
