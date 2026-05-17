@@ -32,12 +32,12 @@ export const EditVisualizer = ({
           className="editable-property-input"
           style={
             {
-              "--pct": `${((config.numBars - 3) / (100 - 3)) * 100}%`,
+              "--pct": `${((config.numBars - 3) / (64 - 3)) * 100}%`,
             } as React.CSSProperties
           }
           type="range"
           min={3}
-          max={100}
+          max={64}
           step={1}
           value={config.numBars}
           onChange={(e) => updateConfig({ numBars: Number(e.target.value) })}

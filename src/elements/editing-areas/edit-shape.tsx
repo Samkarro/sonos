@@ -22,6 +22,8 @@ export const EditShape = ({
     });
   };
 
+  const maxRadius = Math.floor(Math.min(element.width, element.height) / 2);
+
   return (
     <>
       {/* borderRadius */}
@@ -31,12 +33,12 @@ export const EditShape = ({
           className="editable-property-input"
           style={
             {
-              "--pct": `${((config.borderRadius - 0) / (element.height / 2 - 0)) * 100}%`,
+              "--pct": `${((config.borderRadius - 0) / (maxRadius - 0)) * 100}%`,
             } as React.CSSProperties
           }
           type="range"
           min={0}
-          max={element.height / 2}
+          max={maxRadius}
           step={1}
           value={config.borderRadius}
           onChange={(e) =>

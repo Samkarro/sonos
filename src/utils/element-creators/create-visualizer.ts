@@ -71,7 +71,7 @@ export const createVisualizer = (
       const bar = bars[i];
       bar.clear();
       bar.beginFill(fill);
-      bar.drawRect(0, -barHeight, barWidth - 2, barHeight);
+      bar.drawRect(0, -barHeight, barWidth, barHeight);
       bar.endFill();
     }
   };

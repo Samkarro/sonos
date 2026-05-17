@@ -15,9 +15,12 @@ const drawShape = (
   height: number,
   fillColor: number,
 ) => {
+  const maxRadius = Math.min(width, height) / 2;
+  const clampedRadius = Math.min(config.borderRadius, maxRadius);
+
   graphics.beginFill(fillColor);
   if (config.shapeType === "rectangle") {
-    graphics.drawRoundedRect(0, 0, width, height, config.borderRadius);
+    graphics.drawRoundedRect(0, 0, width, height, clampedRadius);
   } else if (config.shapeType === "ellipse") {
     graphics.drawEllipse(width / 2, height / 2, width / 2, height / 2);
   }
@@ -61,8 +64,11 @@ export const CreateShape = (
     drawShape(graphics, shapeConfig, element.width, element.height, fillColor);
     container.addChild(graphics);
   }
+
   let currentFilters = element.filters;
+  let currentWidth = element.width;
   let currentHeight = element.height;
+  let currentShapeConfig = { ...element.shapeConfig };
 
   const bassTick = () => {
     if (!currentFilters || !analyser) return;
@@ -103,12 +109,13 @@ export const CreateShape = (
       updates.shapeConfig !== undefined;
 
     if (needsRedraw) {
-      // clear and redraw all children
-      container.removeChildren();
+      if (updates.width !== undefined) currentWidth = updates.width;
+      if (updates.height !== undefined) currentHeight = updates.height;
+      if (updates.shapeConfig !== undefined) {
+        currentShapeConfig = { ...currentShapeConfig, ...updates.shapeConfig };
+      }
 
-      const currentWidth = updates.width ?? element.width;
-      const currentHeight = updates.height ?? element.height;
-      const currentShapeConfig = { ...shapeConfig, ...updates.shapeConfig };
+      container.removeChildren();
 
       if (currentShapeConfig.imageSrc) {
         const texture = PIXI.Texture.from(currentShapeConfig.imageSrc);
