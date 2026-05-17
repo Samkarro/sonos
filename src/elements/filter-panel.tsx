@@ -24,21 +24,24 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
       {/* Blur */}
       <div className="filter-section">
         <div className="filter-header">
-          <label>Blur</label>
-          <input
-            className="editable-property-checkbox"
-            type="checkbox"
-            checked={filters.blur?.enabled ?? false}
-            onChange={(e) =>
-              update({
-                blur: {
-                  strength: filters.blur?.strength ?? 0,
-                  enabled: e.target.checked,
-                  bindToBass: filters.blur?.bindToBass ?? false,
-                },
-              })
-            }
-          />
+          <label className="checkbox-container">
+            Blur
+            <input
+              className="editable-property-checkbox"
+              type="checkbox"
+              checked={filters.blur?.enabled ?? false}
+              onChange={(e) =>
+                update({
+                  blur: {
+                    strength: filters.blur?.strength ?? 0,
+                    enabled: e.target.checked,
+                    bindToBass: filters.blur?.bindToBass ?? false,
+                  },
+                })
+              }
+            />
+            <span className="checkmark" />
+          </label>
         </div>
         {filters.blur?.enabled && (
           <div className="filter-adjustments-container">
@@ -64,7 +67,8 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
                 })
               }
             />
-            <label>
+            <label className="checkbox-container">
+              Bind to bass
               <input
                 className="editable-property-checkbox"
                 type="checkbox"
@@ -79,7 +83,7 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
                   })
                 }
               />
-              Bind to bass
+              <span className="checkmark checkmark-smaller" />
             </label>
           </div>
         )}
@@ -88,22 +92,25 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
       {/* Bloom */}
       <div className="filter-section">
         <div className="filter-header">
-          <label>Bloom</label>
-          <input
-            className="editable-property-checkbox"
-            type="checkbox"
-            checked={filters.bloom?.enabled ?? false}
-            onChange={(e) =>
-              update({
-                bloom: {
-                  strength: filters.bloom?.strength ?? 2,
-                  quality: filters.bloom?.quality ?? 4,
-                  enabled: e.target.checked,
-                  bindToBass: filters.bloom?.bindToBass ?? false,
-                },
-              })
-            }
-          />
+          <label className="checkbox-container">
+            Bloom
+            <input
+              className="editable-property-checkbox"
+              type="checkbox"
+              checked={filters.bloom?.enabled ?? false}
+              onChange={(e) =>
+                update({
+                  bloom: {
+                    strength: filters.bloom?.strength ?? 2,
+                    quality: filters.bloom?.quality ?? 4,
+                    enabled: e.target.checked,
+                    bindToBass: filters.bloom?.bindToBass ?? false,
+                  },
+                })
+              }
+            />
+            <span className="checkmark" />
+          </label>
         </div>
         {filters.bloom?.enabled && (
           <div className="filter-adjustments-container">
@@ -130,7 +137,8 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
                 })
               }
             />
-            <label>
+            <label className="checkbox-container">
+              Bind to bass
               <input
                 className="editable-property-checkbox"
                 type="checkbox"
@@ -146,7 +154,7 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
                   })
                 }
               />
-              Bind to bass
+              <span className="checkmark checkmark-smaller" />
             </label>
           </div>
         )}
@@ -155,23 +163,27 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
       {/* Color Matrix */}
       <div className="filter-section">
         <div className="filter-header">
-          <label>Color Adjustments</label>
-          <input
-            className="editable-property-checkbox"
-            type="checkbox"
-            checked={filters.colorMatrix?.enabled ?? false}
-            onChange={(e) =>
-              update({
-                colorMatrix: {
-                  brightness: filters.colorMatrix?.brightness ?? 1,
-                  saturation: filters.colorMatrix?.saturation ?? 1,
-                  contrast: filters.colorMatrix?.contrast ?? 0,
-                  enabled: e.target.checked,
-                  brightnessBind: filters.colorMatrix?.brightnessBind ?? false,
-                },
-              })
-            }
-          />
+          <label className="checkbox-container">
+            Color Adjustments
+            <input
+              className="editable-property-checkbox"
+              type="checkbox"
+              checked={filters.colorMatrix?.enabled ?? false}
+              onChange={(e) =>
+                update({
+                  colorMatrix: {
+                    brightness: filters.colorMatrix?.brightness ?? 1,
+                    saturation: filters.colorMatrix?.saturation ?? 1,
+                    contrast: filters.colorMatrix?.contrast ?? 0,
+                    enabled: e.target.checked,
+                    brightnessBind:
+                      filters.colorMatrix?.brightnessBind ?? false,
+                  },
+                })
+              }
+            />
+            <span className="checkmark" />
+          </label>
         </div>
         {filters.colorMatrix?.enabled && (
           <div className="filter-adjustments-container">
@@ -201,7 +213,8 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
                 })
               }
             />
-            <label>
+            <label className="checkbox-container">
+              Bind to bass
               <input
                 className="editable-property-checkbox"
                 type="checkbox"
@@ -220,7 +233,7 @@ export const FilterPanel = ({ element, updateFilters }: FilterPanelProps) => {
                   })
                 }
               />
-              Bind to bass
+              <span className="checkmark checkmark-smaller" />
             </label>
 
             <label>Saturation</label>
