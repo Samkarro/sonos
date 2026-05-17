@@ -5,6 +5,12 @@
   width: 100%;
 }
 
+.view-wrapper {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
 .canvas-element-list-container {
   display: flex;
   flex-direction: column;
@@ -86,14 +92,13 @@
   overflow: scroll;
 }
 
-/* TODO: move this to its respective stylesheet */
 .add-element-section-overlay {
   display: flex;
   align-items: center;
   justify-content: center;
   position: absolute;
-  height: 100vh;
-  width: 100vw;
+  inset: 0;
+  z-index: 500;
   background-color: rgba(0, 0, 0, 0.774);
 }
 

@@ -88,9 +88,7 @@ hr {
 
 .color-picker-overlay {
   position: absolute;
-  top: -220%;
-  left: 25%;
-  z-index: 100;
+  z-index: 9999;
   background-color: var(--background);
   border: 1px solid var(--background-light);
   border-radius: 12px;
